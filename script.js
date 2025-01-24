@@ -9,7 +9,12 @@ const translations = {
     deleteButton: '削除',
     noDueDate: '期限なし',
     dueDate: '期限：',
-    expired: '期限切れ'
+    expired: '期限切れ',
+    priority: {
+      high: '高',
+      medium: '中',
+      low: '低'
+    }
   },
   en: {
     title: 'Primitive Todo',
@@ -20,7 +25,12 @@ const translations = {
     deleteButton: 'Delete',
     noDueDate: 'No due date',
     dueDate: 'Due: ',
-    expired: 'Expired'
+    expired: 'Expired',
+    priority: {
+      high: 'High',
+      medium: 'Medium',
+      low: 'Low'
+    }
   }
 };
 
@@ -179,9 +189,17 @@ class TodoController {
     document.querySelector('.incomplete-tag').textContent = translations[lang].incompleteTasks;
     document.querySelector('.complete-tag').textContent = translations[lang].completedTasks;
     
+    // 優先度選択肢の更新
+    document.querySelectorAll('#prioritySelect option').forEach(option => {
+      option.textContent = option.getAttribute(`data-${lang}`);
+    });
+
+    // 日付入力フィールドの言語設定を更新
+    this.dueDateInput.setAttribute('lang', lang);
+
     // 既存のTodoアイテムの削除ボタンテキストを更新
     document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.textContent = translations[lang].deleteButton;
+      btn.innerHTML = `<i class="fas fa-trash"></i> ${translations[lang].deleteButton}`;
     });
   }
 
@@ -195,7 +213,8 @@ class TodoController {
 
   // テーマアイコンの更新
   updateThemeIcon(theme) {
-    this.themeToggleButton.textContent = theme === 'dark' ? '☀️' : '🌙';
+    const icon = this.themeToggleButton.querySelector('i');
+    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
   }
 
   // テーマの切り替え
@@ -257,6 +276,8 @@ class TodoController {
     checkbox.checked = todo.completed;
     checkbox.addEventListener('change', () => this.todoList.toggleTodo(todo.id));
 
+    const currentLang = document.documentElement.getAttribute('lang') || 'ja';
+
     // テキスト要素
     const todoText = document.createElement('span');
     todoText.className = 'todo-text';
@@ -265,16 +286,11 @@ class TodoController {
     // 優先度インジケーター
     const priorityIndicator = document.createElement('span');
     priorityIndicator.className = `priority-indicator priority-${todo.priority}`;
-    priorityIndicator.textContent = {
-      high: '高',
-      medium: '中',
-      low: '低'
-    }[todo.priority];
+    priorityIndicator.textContent = translations[currentLang].priority[todo.priority];
     todoText.appendChild(priorityIndicator);
 
     // 期限表示
     if (todo.dueDate) {
-      const currentLang = document.documentElement.getAttribute('lang') || 'ja';
       const dueDateSpan = document.createElement('span');
       dueDateSpan.className = `due-date ${todo.isExpired() ? 'expired' : ''}`;
       dueDateSpan.textContent = `${translations[currentLang].dueDate}${this.formatDueDate(todo.dueDate, currentLang)}`;
@@ -289,8 +305,7 @@ class TodoController {
     // 削除ボタン
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
-    const currentLang = document.documentElement.getAttribute('lang') || 'ja';
-    deleteBtn.textContent = translations[currentLang].deleteButton;
+    deleteBtn.innerHTML = `<i class="fas fa-trash"></i> ${translations[currentLang].deleteButton}`;
     deleteBtn.addEventListener('click', () => this.todoList.deleteTodo(todo.id));
 
     // 要素の組み立て

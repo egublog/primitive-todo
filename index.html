@@ -10,6 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -18,10 +19,10 @@
         <h1>プリミティブTodo</h1>
         <div class="header-buttons">
           <button id="toggleTheme" class="theme-toggle">
-            🌙
+            <i class="fas fa-moon"></i>
           </button>
           <button id="toggleLang" class="lang-toggle">
-            🌐
+            <i class="fas fa-language"></i>
           </button>
         </div>
       </div>
@@ -29,13 +30,13 @@
         <div class="input-group">
           <input type="text" id="todoInput" placeholder="新しいタスクを入力" />
           <select id="prioritySelect" class="priority-select">
-            <option value="low">低</option>
-            <option value="medium" selected>中</option>
-            <option value="high">高</option>
+            <option value="low" data-ja="低" data-en="Low">低</option>
+            <option value="medium" selected data-ja="中" data-en="Medium">中</option>
+            <option value="high" data-ja="高" data-en="High">高</option>
           </select>
-          <input type="date" id="dueDateInput" class="date-input" />
+          <input type="date" id="dueDateInput" class="date-input" lang="ja" />
         </div>
-        <button id="addTodo">追加</button>
+        <button id="addTodo"><i class="fas fa-plus"></i> 追加</button>
       </div>
       <div class="todo-sections">
         <div class="todo-section">
