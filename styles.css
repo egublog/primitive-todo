@@ -44,7 +44,11 @@
   --text-gradient: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
   --theme-toggle-bg: rgba(255, 255, 255, 0.1);
   --input-bg: linear-gradient(to bottom, rgba(31, 41, 55, 0.8), var(--item-bg));
-  --section-bg: linear-gradient(to bottom, rgba(31, 41, 55, 0.8), var(--item-bg));
+  --section-bg: linear-gradient(
+    to bottom,
+    rgba(31, 41, 55, 0.8),
+    var(--item-bg)
+  );
 }
 
 body {
@@ -443,7 +447,6 @@ button:hover {
   margin-bottom: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.01);
   border: 1px solid var(--item-border);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   animation: slideIn 0.3s ease-out;
   cursor: grab;
@@ -451,19 +454,14 @@ button:hover {
 }
 
 .todo-item.dragging {
-  opacity: 0.5;
+  opacity: 1;
   cursor: grabbing;
   background-color: var(--gray-light);
-  transform: scale(1.02);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1000;
+  will-change: transform;
 }
 
-.todo-list.drag-over {
-  padding: 1rem;
-  background-color: var(--gray-light);
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
 
 @keyframes slideIn {
   from {
@@ -477,8 +475,7 @@ button:hover {
 }
 
 .todo-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   border-color: rgba(99, 102, 241, 0.2);
 }
 
