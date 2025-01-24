@@ -449,17 +449,7 @@ button:hover {
   border: 1px solid var(--item-border);
   position: relative;
   animation: slideIn 0.3s ease-out;
-  cursor: grab;
   user-select: none;
-}
-
-.todo-item.dragging {
-  opacity: 1;
-  cursor: grabbing;
-  background-color: var(--gray-light);
-  position: relative;
-  z-index: 1000;
-  will-change: transform;
 }
 
 
