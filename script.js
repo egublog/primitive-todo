@@ -179,7 +179,12 @@ class TodoController {
     this.datePicker = flatpickr(this.dueDateInput, {
       dateFormat: 'Y-m-d',
       locale: lang === 'ja' ? 'ja' : 'default',
-      disableMobile: true
+      disableMobile: true,
+      defaultDate: 'today',
+      minDate: 'today',
+      altInput: true,
+      altFormat: lang === 'ja' ? 'Y年m月d日' : 'F j, Y',
+      placeholder: lang === 'ja' ? '期限を選択' : 'Select due date'
     });
   }
 
@@ -212,7 +217,12 @@ class TodoController {
     this.datePicker = flatpickr(this.dueDateInput, {
       dateFormat: 'Y-m-d',
       locale: lang === 'ja' ? 'ja' : 'default',
-      disableMobile: true
+      disableMobile: true,
+      defaultDate: 'today',
+      minDate: 'today',
+      altInput: true,
+      altFormat: lang === 'ja' ? 'Y年m月d日' : 'F j, Y',
+      placeholder: lang === 'ja' ? '期限を選択' : 'Select due date'
     });
 
     // 既存のTodoアイテムの削除ボタンテキストを更新

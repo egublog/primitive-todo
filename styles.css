@@ -161,6 +161,71 @@ h1 {
   min-width: 140px;
 }
 
+/* flatpickrのカスタマイズ */
+.flatpickr-input {
+  background-color: var(--item-bg) !important;
+  color: var(--text-color) !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  font-family: "Noto Sans JP", sans-serif !important;
+  padding: 0.5rem !important;
+  cursor: pointer !important;
+  min-width: 140px !important;
+}
+
+.flatpickr-calendar {
+  background-color: var(--item-bg) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--item-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+  font-family: "Noto Sans JP", sans-serif !important;
+}
+
+.flatpickr-day {
+  color: var(--text-color) !important;
+  border-radius: 8px !important;
+}
+
+.flatpickr-day.selected {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.flatpickr-day:hover {
+  background-color: var(--gray-light) !important;
+}
+
+.flatpickr-current-month {
+  color: var(--text-color) !important;
+  font-family: "Noto Sans JP", sans-serif !important;
+}
+
+.flatpickr-monthDropdown-months {
+  background-color: var(--item-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+  color: var(--text-color) !important;
+}
+
+[data-theme="dark"] .flatpickr-calendar {
+  background-color: var(--item-bg) !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .flatpickr-day.selected {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .flatpickr-day:hover {
+  background-color: var(--gray-light) !important;
+}
+
 .date-input::-webkit-calendar-picker-indicator {
   cursor: pointer;
   padding: 0.2rem;
