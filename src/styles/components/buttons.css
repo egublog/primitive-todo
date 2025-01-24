@@ -1,8 +1,8 @@
 /* 基本ボタンスタイル */
 button {
-  --button-height: 44px; /* タッチターゲットの最小サイズ */
+  --button-height: 36px; /* タッチターゲットの最小サイズ */
   min-height: var(--button-height);
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1.25rem;
   background: var(--primary-color);
   color: var(--button-text-color, white);
   border: none;
@@ -59,7 +59,10 @@ button:disabled {
 /* 削除ボタン */
 .delete-btn {
   --button-height: 36px;
-  background: var(--danger-gradient, linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%));
+  background: var(
+    --danger-gradient,
+    linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%)
+  );
   padding: 0.5rem 1rem;
   font-size: var(--font-sm);
   box-shadow: var(--danger-shadow, 0 4px 8px rgba(239, 68, 68, 0.2));
@@ -71,7 +74,10 @@ button:disabled {
 }
 
 .delete-btn:hover {
-  background: var(--danger-gradient-hover, linear-gradient(135deg, #dc2626 0%, var(--danger-color) 100%));
+  background: var(
+    --danger-gradient-hover,
+    linear-gradient(135deg, #dc2626 0%, var(--danger-color) 100%)
+  );
   box-shadow: var(--danger-shadow-hover, 0 6px 12px rgba(239, 68, 68, 0.3));
 }
 
@@ -116,10 +122,18 @@ button:disabled {
   box-shadow: var(--theme-toggle-shadow-hover, 0 4px 12px rgba(0, 0, 0, 0.15));
 }
 
+/* 追加ボタン */
+#addTodo {
+  min-height: var(--button-height);
+  height: var(--button-height);
+  padding: 0 1rem;
+  line-height: 1;
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 480px) {
   button {
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.75rem;
     font-size: var(--font-xs);
   }
 

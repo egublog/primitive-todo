@@ -83,7 +83,7 @@
 
 /* フィルター */
 .category-filter {
-  margin: -0.5rem 0 2rem;
+  margin: 0 0 1.5rem;
   display: flex;
   justify-content: flex-end;
   position: sticky;
@@ -100,7 +100,8 @@
 }
 
 .category-filter-select {
-  min-width: 150px;
+  min-width: 120px;
+  max-width: 200px;
   background: var(--bg-color);
 }
 
@@ -139,11 +140,13 @@
   .category-filter {
     position: static;
     margin: 0 0 1rem;
-    justify-content: stretch;
+    justify-content: flex-end;
   }
 
   .category-filter-select {
-    width: 100%;
+    width: auto;
+    min-width: 100px;
+    max-width: 160px;
   }
 }
 
