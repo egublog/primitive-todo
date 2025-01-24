@@ -344,19 +344,46 @@ export class TodoController {
     todoText.setAttribute('role', 'textbox');
     todoText.setAttribute('aria-label', todo.text);
 
+    // 1段目のコンテナ作成
+    const firstRow = document.createElement('div');
+    firstRow.className = 'todo-first-row';
+
+    // 削除ボタン
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.innerHTML = `<i class="fas fa-trash" aria-hidden="true"></i> ${translations[currentLang].deleteButton}`;
+    deleteBtn.setAttribute('aria-label', `${todo.text}を削除`);
+    deleteBtn.addEventListener('click', () => this.todoList.deleteTodo(todo.id));
+
+    // 編集機能
+    if (!todo.completed) {
+      todoText.addEventListener('click', () => this.setupEditMode(li, todo));
+      todoText.setAttribute('role', 'button');
+      todoText.setAttribute('tabindex', '0');
+      todoText.setAttribute('aria-label', `${todo.text}を編集`);
+    }
+
+    // 2段目のコンテナ作成
+    const secondRow = document.createElement('div');
+    secondRow.className = 'todo-second-row';
+
+    // メタデータコンテナの作成
+    const metadataContainer = document.createElement('div');
+    metadataContainer.className = 'metadata-container';
+
     // 優先度インジケーター
     const priorityIndicator = document.createElement('span');
     priorityIndicator.className = `priority-indicator priority-${todo.priority}`;
     priorityIndicator.textContent = translations[currentLang].priority[todo.priority];
     priorityIndicator.setAttribute('role', 'status');
-    todoText.appendChild(priorityIndicator);
+    metadataContainer.appendChild(priorityIndicator);
 
     // カテゴリタグ
     const categoryTag = document.createElement('span');
     categoryTag.className = 'category-tag';
     categoryTag.textContent = translations[currentLang].category[todo.category];
     categoryTag.setAttribute('role', 'status');
-    todoText.appendChild(categoryTag);
+    metadataContainer.appendChild(categoryTag);
 
     // 期限表示
     const dueDateSpan = document.createElement('span');
@@ -370,27 +397,19 @@ export class TodoController {
       dueDateSpan.textContent = translations[currentLang].noDueDate;
     }
     dueDateSpan.setAttribute('role', 'status');
-    todoText.appendChild(dueDateSpan);
+    metadataContainer.appendChild(dueDateSpan);
 
-    // 編集機能
-    if (!todo.completed) {
-      todoText.addEventListener('click', () => this.setupEditMode(li, todo));
-      todoText.setAttribute('role', 'button');
-      todoText.setAttribute('tabindex', '0');
-      todoText.setAttribute('aria-label', `${todo.text}を編集`);
-    }
+    // 1段目に要素を追加
+    firstRow.appendChild(checkbox);
+    firstRow.appendChild(todoText);
+    firstRow.appendChild(deleteBtn);
 
-    // 削除ボタン
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'delete-btn';
-    deleteBtn.innerHTML = `<i class="fas fa-trash" aria-hidden="true"></i> ${translations[currentLang].deleteButton}`;
-    deleteBtn.setAttribute('aria-label', `${todo.text}を削除`);
-    deleteBtn.addEventListener('click', () => this.todoList.deleteTodo(todo.id));
+    // 2段目に要素を追加
+    secondRow.appendChild(metadataContainer);
 
     // 要素の組み立て
-    li.appendChild(checkbox);
-    li.appendChild(todoText);
-    li.appendChild(deleteBtn);
+    li.appendChild(firstRow);
+    li.appendChild(secondRow);
 
     return li;
   }
@@ -409,7 +428,8 @@ export class TodoController {
     input.setAttribute('aria-label', `${todo.text}を編集`);
 
     const todoText = li.querySelector('.todo-text');
-    li.replaceChild(input, todoText);
+    const firstRow = li.querySelector('.todo-first-row');
+    firstRow.replaceChild(input, todoText);
     input.focus();
 
     const handleEdit = () => {
