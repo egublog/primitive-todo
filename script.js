@@ -107,6 +107,7 @@ class TodoController {
     this.addTodoButton = document.getElementById('addTodo');
     this.incompleteTodoList = document.getElementById('incompleteTodoList');
     this.completedTodoList = document.getElementById('completedTodoList');
+    this.themeToggleButton = document.getElementById('toggleTheme');
 
     // モデルのインスタンス化
     this.todoList = new TodoList();
@@ -117,8 +118,33 @@ class TodoController {
     // 初期データの読み込み
     this.todoList.load();
 
+    // テーマの初期化
+    this.initializeTheme();
+
     // モデルの変更を監視
     this.todoList.subscribe(() => this.render());
+  }
+
+  // テーマの初期化
+  initializeTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    this.updateThemeIcon(savedTheme);
+  }
+
+  // テーマアイコンの更新
+  updateThemeIcon(theme) {
+    this.themeToggleButton.textContent = theme === 'dark' ? '☀️' : '🌙';
+  }
+
+  // テーマの切り替え
+  toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    this.updateThemeIcon(newTheme);
   }
 
   setupEventListeners() {
@@ -131,6 +157,9 @@ class TodoController {
         this.handleAddTodo();
       }
     });
+
+    // テーマ切り替えボタンのイベント
+    this.themeToggleButton.addEventListener('click', () => this.toggleTheme());
   }
 
   handleAddTodo() {

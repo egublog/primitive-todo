@@ -14,6 +14,32 @@
   --shadow-color: rgba(0, 0, 0, 0.1);
   --gradient-start: #f8faff;
   --gradient-end: #e8eeff;
+  --text-color: #1e293b;
+  --bg-color: rgba(255, 255, 255, 0.95);
+  --container-border: rgba(255, 255, 255, 0.8);
+  --item-bg: white;
+  --item-border: rgba(226, 232, 240, 0.8);
+  --text-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --theme-toggle-bg: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] {
+  --primary-color: #818cf8;
+  --primary-hover: #6366f1;
+  --success-color: #34d399;
+  --danger-color: #f87171;
+  --gray-light: #1f2937;
+  --gray-dark: #9ca3af;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --gradient-start: #111827;
+  --gradient-end: #1f2937;
+  --text-color: #e5e7eb;
+  --bg-color: rgba(17, 24, 39, 0.95);
+  --container-border: rgba(31, 41, 55, 0.8);
+  --item-bg: #1f2937;
+  --item-border: rgba(55, 65, 81, 0.8);
+  --text-gradient: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
+  --theme-toggle-bg: rgba(255, 255, 255, 0.1);
 }
 
 body {
@@ -23,7 +49,7 @@ body {
     var(--gradient-start) 0%,
     var(--gradient-end) 100%
   );
-  color: #1e293b;
+  color: var(--text-color);
   min-height: 100vh;
   padding: 2rem 1rem;
   line-height: 1.6;
@@ -33,22 +59,51 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 2.5rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-color);
   border-radius: 24px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08),
     0 10px 20px rgba(99, 102, 241, 0.04);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--container-border);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.theme-toggle {
+  background: var(--theme-toggle-bg);
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle:hover {
+  background: var(--gray-light);
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 2.5rem;
-  color: #1e293b;
+  margin: 0;
+  color: var(--text-color);
   font-size: 2.8rem;
   font-weight: 700;
   letter-spacing: -1px;
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  background: var(--text-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
@@ -70,6 +125,8 @@ h1 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03),
     inset 0 2px 4px rgba(0, 0, 0, 0.02);
   font-family: "Noto Sans JP", sans-serif;
+  background-color: var(--item-bg);
+  color: var(--text-color);
 }
 
 #todoInput:focus {
@@ -119,11 +176,11 @@ button:hover {
 }
 
 .todo-section {
-  background: white;
+  background: var(--item-bg);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid var(--item-border);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -159,11 +216,11 @@ button:hover {
   display: flex;
   align-items: center;
   padding: 1.2rem;
-  background-color: white;
+  background-color: var(--item-bg);
   border-radius: 12px;
   margin-bottom: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.01);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid var(--item-border);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   animation: slideIn 0.3s ease-out;
@@ -202,7 +259,7 @@ button:hover {
   font-size: 1.1rem;
   transition: all 0.3s ease;
   cursor: pointer;
-  color: #1e293b;
+  color: var(--text-color);
 }
 
 .delete-btn {
@@ -241,7 +298,8 @@ button:hover {
   border: 2px solid var(--primary-color);
   border-radius: 8px;
   outline: none;
-  background-color: white;
+  background-color: var(--item-bg);
+  color: var(--text-color);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: "Noto Sans JP", sans-serif;
 }
