@@ -37,6 +37,13 @@
             <option value="medium" selected data-ja="中" data-en="Medium">中</option>
             <option value="high" data-ja="高" data-en="High">高</option>
           </select>
+          <select id="categorySelect" class="category-select">
+            <option value="none" data-ja="カテゴリなし" data-en="No Category">カテゴリなし</option>
+            <option value="work" data-ja="仕事" data-en="Work">仕事</option>
+            <option value="personal" data-ja="個人" data-en="Personal">個人</option>
+            <option value="shopping" data-ja="買い物" data-en="Shopping">買い物</option>
+            <option value="study" data-ja="学習" data-en="Study">学習</option>
+          </select>
           <input 
             type="date" 
             id="dueDateInput" 
@@ -46,6 +53,16 @@
           />
         </div>
         <button id="addTodo"><i class="fas fa-plus"></i> 追加</button>
+      </div>
+      <div class="category-filter">
+        <select id="categoryFilter" class="category-filter-select">
+          <option value="all" data-ja="すべて" data-en="All">すべて</option>
+          <option value="none" data-ja="カテゴリなし" data-en="No Category">カテゴリなし</option>
+          <option value="work" data-ja="仕事" data-en="Work">仕事</option>
+          <option value="personal" data-ja="個人" data-en="Personal">個人</option>
+          <option value="shopping" data-ja="買い物" data-en="Shopping">買い物</option>
+          <option value="study" data-ja="学習" data-en="Study">学習</option>
+        </select>
       </div>
       <div class="todo-sections">
         <div class="todo-section">

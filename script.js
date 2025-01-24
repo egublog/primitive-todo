@@ -14,6 +14,14 @@ const translations = {
       high: '高',
       medium: '中',
       low: '低'
+    },
+    category: {
+      all: 'すべて',
+      none: 'カテゴリなし',
+      work: '仕事',
+      personal: '個人',
+      shopping: '買い物',
+      study: '学習'
     }
   },
   en: {
@@ -30,17 +38,26 @@ const translations = {
       high: 'High',
       medium: 'Medium',
       low: 'Low'
+    },
+    category: {
+      all: 'All',
+      none: 'No Category',
+      work: 'Work',
+      personal: 'Personal',
+      shopping: 'Shopping',
+      study: 'Study'
     }
   }
 };
 
 // TodoItemの型定義
 class TodoItem {
-  constructor(text, priority = 'medium', completed = false, dueDate = null) {
+  constructor(text, priority = 'medium', completed = false, dueDate = null, category = 'none') {
     this.text = text;
     this.priority = priority;
     this.completed = completed;
     this.dueDate = dueDate;
+    this.category = category;
     this.id = Date.now().toString(); // ユニークID
   }
 
@@ -92,10 +109,10 @@ class TodoList {
   }
 
   // Todo追加
-  addTodo(text, priority, dueDate) {
+  addTodo(text, priority, dueDate, category) {
     if (!text.trim()) return false;
     
-    const todo = new TodoItem(text, priority, false, dueDate);
+    const todo = new TodoItem(text, priority, false, dueDate, category);
     this.todos.push(todo);
     this.save();
     this.notify();
@@ -137,8 +154,12 @@ class TodoList {
   }
 
   // フィルター済みのTodoリストを取得
-  getFilteredTodos(completed) {
-    return this.todos.filter(todo => todo.completed === completed);
+  getFilteredTodos(completed, category = 'all') {
+    let filteredTodos = this.todos.filter(todo => todo.completed === completed);
+    if (category !== 'all') {
+      filteredTodos = filteredTodos.filter(todo => todo.category === category);
+    }
+    return filteredTodos;
   }
 }
 
@@ -148,6 +169,8 @@ class TodoController {
     // DOMの参照を保持
     this.todoInput = document.getElementById('todoInput');
     this.prioritySelect = document.getElementById('prioritySelect');
+    this.categorySelect = document.getElementById('categorySelect');
+    this.categoryFilter = document.getElementById('categoryFilter');
     this.dueDateInput = document.getElementById('dueDateInput');
     this.addTodoButton = document.getElementById('addTodo');
     this.incompleteTodoList = document.getElementById('incompleteTodoList');
@@ -212,6 +235,11 @@ class TodoController {
       option.textContent = option.getAttribute(`data-${lang}`);
     });
 
+    // カテゴリ選択肢の更新
+    document.querySelectorAll('#categorySelect option, #categoryFilter option').forEach(option => {
+      option.textContent = option.getAttribute(`data-${lang}`);
+    });
+
     // flatpickrのロケールを更新
     this.datePicker.destroy();
     this.datePicker = flatpickr(this.dueDateInput, {
@@ -266,6 +294,9 @@ class TodoController {
       }
     });
 
+    // カテゴリフィルターのイベント
+    this.categoryFilter.addEventListener('change', () => this.render());
+
     // テーマと言語切り替えボタンのイベント
     this.themeToggleButton.addEventListener('click', () => this.toggleTheme());
     document.getElementById('toggleLang').addEventListener('click', () => this.toggleLanguage());
@@ -275,7 +306,8 @@ class TodoController {
     const success = this.todoList.addTodo(
       this.todoInput.value,
       this.prioritySelect.value,
-      this.dueDateInput.value || null
+      this.dueDateInput.value || null,
+      this.categorySelect.value
     );
     if (success) {
       this.todoInput.value = '';
@@ -316,6 +348,12 @@ class TodoController {
     priorityIndicator.className = `priority-indicator priority-${todo.priority}`;
     priorityIndicator.textContent = translations[currentLang].priority[todo.priority];
     todoText.appendChild(priorityIndicator);
+
+    // カテゴリタグ
+    const categoryTag = document.createElement('span');
+    categoryTag.className = 'category-tag';
+    categoryTag.textContent = translations[currentLang].category[todo.category];
+    todoText.appendChild(categoryTag);
 
     // 期限表示
     if (todo.dueDate) {
@@ -372,16 +410,18 @@ class TodoController {
 
   // UIの更新
   render() {
+    const selectedCategory = this.categoryFilter.value;
+
     // 未完了リストの更新
     this.incompleteTodoList.innerHTML = '';
-    this.todoList.getFilteredTodos(false).forEach(todo => {
+    this.todoList.getFilteredTodos(false, selectedCategory).forEach(todo => {
       const element = this.createTodoElement(todo);
       this.incompleteTodoList.appendChild(element);
     });
 
     // 完了リストの更新
     this.completedTodoList.innerHTML = '';
-    this.todoList.getFilteredTodos(true).forEach(todo => {
+    this.todoList.getFilteredTodos(true, selectedCategory).forEach(todo => {
       const element = this.createTodoElement(todo);
       this.completedTodoList.appendChild(element);
     });
