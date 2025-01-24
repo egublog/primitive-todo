@@ -186,14 +186,14 @@ class TodoController {
     // イベントリスナーの設定
     this.setupEventListeners();
 
-    // 初期データの読み込み
-    this.todoList.load();
-
     // テーマの初期化
     this.initializeTheme();
 
-    // モデルの変更を監視
+    // モデルの変更を監視（loadの前に設定）
     this.todoList.subscribe(() => this.render());
+
+    // 初期データの読み込み（subscribeの後に実行）
+    this.todoList.load();
   }
 
   // flatpickrの初期化
