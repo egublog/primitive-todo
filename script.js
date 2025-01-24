@@ -157,6 +157,9 @@ class TodoController {
     // モデルのインスタンス化
     this.todoList = new TodoList();
 
+    // flatpickrの初期化
+    this.initializeDatePicker();
+
     // イベントリスナーの設定
     this.setupEventListeners();
 
@@ -168,6 +171,16 @@ class TodoController {
 
     // モデルの変更を監視
     this.todoList.subscribe(() => this.render());
+  }
+
+  // flatpickrの初期化
+  initializeDatePicker() {
+    const lang = localStorage.getItem('lang') || 'ja';
+    this.datePicker = flatpickr(this.dueDateInput, {
+      dateFormat: 'Y-m-d',
+      locale: lang === 'ja' ? 'ja' : 'default',
+      disableMobile: true
+    });
   }
 
   // 言語とテーマの初期化
@@ -194,8 +207,13 @@ class TodoController {
       option.textContent = option.getAttribute(`data-${lang}`);
     });
 
-    // 日付入力フィールドの言語設定を更新
-    this.dueDateInput.setAttribute('lang', lang);
+    // flatpickrのロケールを更新
+    this.datePicker.destroy();
+    this.datePicker = flatpickr(this.dueDateInput, {
+      dateFormat: 'Y-m-d',
+      locale: lang === 'ja' ? 'ja' : 'default',
+      disableMobile: true
+    });
 
     // 既存のTodoアイテムの削除ボタンテキストを更新
     document.querySelectorAll('.delete-btn').forEach(btn => {
