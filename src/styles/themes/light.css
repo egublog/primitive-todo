@@ -1,0 +1,20 @@
+:root {
+  --primary-color: #6366f1;
+  --primary-hover: #4f46e5;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --gray-light: #f8fafc;
+  --gray-dark: #64748b;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --gradient-start: #f8faff;
+  --gradient-end: #e8eeff;
+  --text-color: #1e293b;
+  --bg-color: rgba(255, 255, 255, 0.95);
+  --container-border: rgba(255, 255, 255, 0.8);
+  --item-bg: white;
+  --item-border: rgba(226, 232, 240, 0.8);
+  --text-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --theme-toggle-bg: rgba(0, 0, 0, 0.05);
+  --input-bg: linear-gradient(to bottom, var(--bg-color), var(--item-bg));
+  --section-bg: linear-gradient(to bottom, var(--bg-color), var(--item-bg));
+}

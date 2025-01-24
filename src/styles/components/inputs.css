@@ -1,0 +1,195 @@
+.todo-input {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  background: var(--input-bg);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid var(--item-border);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.input-group {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.select-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+#todoInput {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  border: 1px solid var(--item-border);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-family: "Noto Sans JP", sans-serif;
+  background-color: var(--item-bg);
+  color: var(--text-color);
+}
+
+#todoInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.priority-select,
+.category-select,
+.category-filter-select {
+  padding: 0.75rem;
+  border: 1px solid var(--item-border);
+  border-radius: 8px;
+  font-family: "Noto Sans JP", sans-serif;
+  background-color: var(--item-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.priority-select:focus,
+.category-select:focus,
+.category-filter-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.date-input {
+  padding: 0.75rem;
+  border: 1px solid var(--item-border);
+  border-radius: 8px;
+  font-family: "Noto Sans JP", sans-serif;
+  background-color: var(--item-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 0.2rem;
+  margin-left: 0.5rem;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+[data-theme="dark"] .date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.edit-input {
+  flex: 1;
+  margin: 0 1rem;
+  padding: 0.8rem 1rem;
+  font-size: 1.1rem;
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  outline: none;
+  background-color: var(--item-bg);
+  color: var(--text-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+.edit-input:focus {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2),
+    inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* flatpickrのカスタマイズ */
+.flatpickr-input {
+  background-color: var(--item-bg) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--item-border) !important;
+  border-radius: 8px !important;
+  font-family: "Noto Sans JP", sans-serif !important;
+  padding: 0.75rem !important;
+  cursor: pointer !important;
+  font-size: 0.95rem !important;
+  width: 100% !important;
+}
+
+.flatpickr-calendar {
+  background-color: var(--item-bg) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--item-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+  font-family: "Noto Sans JP", sans-serif !important;
+}
+
+.flatpickr-day {
+  color: var(--text-color) !important;
+  border-radius: 8px !important;
+}
+
+.flatpickr-day.selected {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.flatpickr-day:hover {
+  background-color: var(--gray-light) !important;
+}
+
+.flatpickr-current-month {
+  color: var(--text-color) !important;
+  font-family: "Noto Sans JP", sans-serif !important;
+}
+
+.flatpickr-monthDropdown-months {
+  background-color: var(--item-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+  color: var(--text-color) !important;
+}
+
+[data-theme="dark"] .flatpickr-calendar {
+  background-color: var(--item-bg) !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .flatpickr-day.selected {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .flatpickr-day:hover {
+  background-color: var(--gray-light) !important;
+}
+
+@media (max-width: 768px) {
+  .select-group {
+    grid-template-columns: 1fr;
+  }
+
+  #todoInput,
+  button {
+    font-size: 1rem;
+    padding: 1rem 1.2rem;
+  }
+}

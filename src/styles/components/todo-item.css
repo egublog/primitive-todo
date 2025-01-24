@@ -1,0 +1,144 @@
+.todo-item {
+  display: flex;
+  align-items: center;
+  padding: 1.2rem;
+  background-color: var(--item-bg);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.01);
+  border: 1px solid var(--item-border);
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+  user-select: none;
+  gap: 0.5rem;
+}
+
+.todo-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.todo-item.completed {
+  background-color: var(--gray-light);
+  opacity: 0.8;
+}
+
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: var(--gray-dark);
+}
+
+.todo-text {
+  flex: 1;
+  margin: 0 1rem;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 200px);
+}
+
+.todo-checkbox {
+  width: 22px;
+  height: 22px;
+  margin-right: 1rem;
+  cursor: pointer;
+  accent-color: var(--success-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.todo-checkbox:checked {
+  transform: scale(1.1);
+}
+
+.todo-item[data-priority="high"] {
+  border-left: 4px solid #ef4444;
+}
+
+.todo-item[data-priority="medium"] {
+  border-left: 4px solid #f59e0b;
+}
+
+.todo-item[data-priority="low"] {
+  border-left: 4px solid #10b981;
+}
+
+.priority-indicator {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  color: white;
+}
+
+.priority-high {
+  background-color: #ef4444;
+}
+
+.priority-medium {
+  background-color: #f59e0b;
+}
+
+.priority-low {
+  background-color: #10b981;
+}
+
+.category-tag {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  background-color: var(--gray-light);
+  color: var(--text-color);
+}
+
+.due-date {
+  font-size: 0.9rem;
+  color: var(--gray-dark);
+  margin-left: 1rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background-color: var(--gray-light);
+  white-space: nowrap;
+  min-width: 90px;
+  text-align: center;
+}
+
+.due-date.expired {
+  color: var(--danger-color);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .todo-text {
+    max-width: calc(100% - 150px);
+  }
+
+  .todo-item {
+    flex-wrap: wrap;
+  }
+
+  .due-date {
+    order: 2;
+    margin-left: auto;
+    margin-top: 0.5rem;
+  }
+}
