@@ -32,25 +32,27 @@
       <div class="todo-input">
         <div class="input-group">
           <input type="text" id="todoInput" placeholder="新しいタスクを入力" />
-          <select id="prioritySelect" class="priority-select">
-            <option value="low" data-ja="低" data-en="Low">低</option>
-            <option value="medium" selected data-ja="中" data-en="Medium">中</option>
-            <option value="high" data-ja="高" data-en="High">高</option>
-          </select>
-          <select id="categorySelect" class="category-select">
-            <option value="none" data-ja="カテゴリなし" data-en="No Category">カテゴリなし</option>
-            <option value="work" data-ja="仕事" data-en="Work">仕事</option>
-            <option value="personal" data-ja="個人" data-en="Personal">個人</option>
-            <option value="shopping" data-ja="買い物" data-en="Shopping">買い物</option>
-            <option value="study" data-ja="学習" data-en="Study">学習</option>
-          </select>
-          <input 
-            type="date" 
-            id="dueDateInput" 
-            class="date-input" 
-            lang="ja"
-            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
-          />
+          <div class="select-group">
+            <select id="prioritySelect" class="priority-select">
+              <option value="low" data-ja="低" data-en="Low">低</option>
+              <option value="medium" selected data-ja="中" data-en="Medium">中</option>
+              <option value="high" data-ja="高" data-en="High">高</option>
+            </select>
+            <select id="categorySelect" class="category-select">
+              <option value="none" data-ja="カテゴリなし" data-en="No Category">カテゴリなし</option>
+              <option value="work" data-ja="仕事" data-en="Work">仕事</option>
+              <option value="personal" data-ja="個人" data-en="Personal">個人</option>
+              <option value="shopping" data-ja="買い物" data-en="Shopping">買い物</option>
+              <option value="study" data-ja="学習" data-en="Study">学習</option>
+            </select>
+            <input 
+              type="date" 
+              id="dueDateInput" 
+              class="date-input" 
+              lang="ja"
+              pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+            />
+          </div>
         </div>
         <button id="addTodo"><i class="fas fa-plus"></i> 追加</button>
       </div>
