@@ -281,7 +281,7 @@ export class TodoController {
       );
       
       this.elements.todoInput.value = '';
-      this.elements.dueDateInput.value = '';
+      this.datePicker.setDate(new Date()); // 日付を今日の日付にリセット
       this.elements.todoInput.focus();
     } catch (error) {
       this.showError('追加エラー', error.message);
@@ -359,13 +359,18 @@ export class TodoController {
     todoText.appendChild(categoryTag);
 
     // 期限表示
+    const dueDateSpan = document.createElement('span');
+    dueDateSpan.className = 'due-date';
     if (todo.dueDate) {
-      const dueDateSpan = document.createElement('span');
-      dueDateSpan.className = `due-date ${todo.isExpired() ? 'expired' : ''}`;
+      if (todo.isExpired()) {
+        dueDateSpan.classList.add('expired');
+      }
       dueDateSpan.textContent = `${translations[currentLang].dueDate}${this.formatDueDate(todo.dueDate, currentLang)}`;
-      dueDateSpan.setAttribute('role', 'status');
-      todoText.appendChild(dueDateSpan);
+    } else {
+      dueDateSpan.textContent = translations[currentLang].noDueDate;
     }
+    dueDateSpan.setAttribute('role', 'status');
+    todoText.appendChild(dueDateSpan);
 
     // 編集機能
     if (!todo.completed) {
