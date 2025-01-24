@@ -6,7 +6,10 @@ const translations = {
     addButton: '追加',
     incompleteTasks: '未完了のタスク',
     completedTasks: '完了したタスク',
-    deleteButton: '削除'
+    deleteButton: '削除',
+    noDueDate: '期限なし',
+    dueDate: '期限：',
+    expired: '期限切れ'
   },
   en: {
     title: 'Primitive Todo',
@@ -14,17 +17,26 @@ const translations = {
     addButton: 'Add',
     incompleteTasks: 'Incomplete Tasks',
     completedTasks: 'Completed Tasks',
-    deleteButton: 'Delete'
+    deleteButton: 'Delete',
+    noDueDate: 'No due date',
+    dueDate: 'Due: ',
+    expired: 'Expired'
   }
 };
 
 // TodoItemの型定義
 class TodoItem {
-  constructor(text, priority = 'medium', completed = false) {
+  constructor(text, priority = 'medium', completed = false, dueDate = null) {
     this.text = text;
     this.priority = priority;
     this.completed = completed;
+    this.dueDate = dueDate;
     this.id = Date.now().toString(); // ユニークID
+  }
+
+  isExpired() {
+    if (!this.dueDate || this.completed) return false;
+    return new Date(this.dueDate) < new Date();
   }
 }
 
@@ -70,10 +82,10 @@ class TodoList {
   }
 
   // Todo追加
-  addTodo(text, priority) {
+  addTodo(text, priority, dueDate) {
     if (!text.trim()) return false;
     
-    const todo = new TodoItem(text, priority);
+    const todo = new TodoItem(text, priority, false, dueDate);
     this.todos.push(todo);
     this.save();
     this.notify();
@@ -126,6 +138,7 @@ class TodoController {
     // DOMの参照を保持
     this.todoInput = document.getElementById('todoInput');
     this.prioritySelect = document.getElementById('prioritySelect');
+    this.dueDateInput = document.getElementById('dueDateInput');
     this.addTodoButton = document.getElementById('addTodo');
     this.incompleteTodoList = document.getElementById('incompleteTodoList');
     this.completedTodoList = document.getElementById('completedTodoList');
@@ -214,11 +227,21 @@ class TodoController {
   handleAddTodo() {
     const success = this.todoList.addTodo(
       this.todoInput.value,
-      this.prioritySelect.value
+      this.prioritySelect.value,
+      this.dueDateInput.value || null
     );
     if (success) {
       this.todoInput.value = '';
+      this.dueDateInput.value = '';
     }
+  }
+
+  // 期限の表示フォーマット
+  formatDueDate(dueDate, lang) {
+    if (!dueDate) return '';
+    const date = new Date(dueDate);
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return date.toLocaleDateString(lang === 'ja' ? 'ja-JP' : 'en-US', options);
   }
 
   // Todo要素の作成
@@ -248,6 +271,15 @@ class TodoController {
       low: '低'
     }[todo.priority];
     todoText.appendChild(priorityIndicator);
+
+    // 期限表示
+    if (todo.dueDate) {
+      const currentLang = document.documentElement.getAttribute('lang') || 'ja';
+      const dueDateSpan = document.createElement('span');
+      dueDateSpan.className = `due-date ${todo.isExpired() ? 'expired' : ''}`;
+      dueDateSpan.textContent = `${translations[currentLang].dueDate}${this.formatDueDate(todo.dueDate, currentLang)}`;
+      todoText.appendChild(dueDateSpan);
+    }
 
     // 編集機能
     if (!todo.completed) {
