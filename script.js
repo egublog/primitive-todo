@@ -119,6 +119,22 @@ class TodoList {
     return true;
   }
 
+  // タスクの順序を更新
+  reorderTodo(fromIndex, toIndex, isCompleted) {
+    const fromList = this.todos.filter(todo => todo.completed === isCompleted);
+    const [movedItem] = fromList.splice(fromIndex, 1);
+    fromList.splice(toIndex, 0, movedItem);
+    
+    // 完了状態でフィルタリングしたリストを元のtodosに反映
+    this.todos = [
+      ...this.todos.filter(todo => todo.completed !== isCompleted),
+      ...fromList
+    ];
+    
+    this.save();
+    this.notify();
+  }
+
   // Todo削除
   deleteTodo(id) {
     const index = this.todos.findIndex(todo => todo.id === id);
@@ -298,6 +314,80 @@ class TodoController {
     // テーマと言語切り替えボタンのイベント
     this.themeToggleButton.addEventListener('click', () => this.toggleTheme());
     document.getElementById('toggleLang').addEventListener('click', () => this.toggleLanguage());
+
+    // ドラッグ&ドロップのイベントを設定
+    this.setupDragAndDrop();
+  }
+
+  // ドラッグ&ドロップの設定
+  setupDragAndDrop() {
+    const handleDragStart = (e) => {
+      e.target.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', e.target.dataset.id);
+    };
+
+    const handleDragEnd = (e) => {
+      e.target.classList.remove('dragging');
+      document.querySelectorAll('.todo-list').forEach(list => {
+        list.classList.remove('drag-over');
+      });
+    };
+
+    const handleDragOver = (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const list = e.currentTarget;
+      list.classList.add('drag-over');
+    };
+
+    const handleDragLeave = (e) => {
+      e.currentTarget.classList.remove('drag-over');
+    };
+
+    const handleDrop = (e) => {
+      e.preventDefault();
+      const list = e.currentTarget;
+      list.classList.remove('drag-over');
+      
+      const draggedId = e.dataTransfer.getData('text/plain');
+      const draggedElement = document.querySelector(`[data-id="${draggedId}"]`);
+      const isCompleted = list.dataset.listType === 'completed';
+      
+      // ドロップ位置を計算
+      const afterElement = this.getDragAfterElement(list, e.clientY);
+      const items = Array.from(list.children);
+      const toIndex = afterElement ? items.indexOf(afterElement) : items.length;
+      const fromIndex = Array.from(draggedElement.parentElement.children).indexOf(draggedElement);
+      
+      // 同じリスト内での移動の場合のみ順序を更新
+      if (draggedElement.parentElement === list) {
+        this.todoList.reorderTodo(fromIndex, toIndex, isCompleted);
+      }
+    };
+
+    // ドロップ位置を計算するヘルパー関数
+    this.getDragAfterElement = (list, y) => {
+      const draggableElements = [...list.querySelectorAll('.todo-item:not(.dragging)')];
+      
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    };
+
+    // イベントリスナーを設定
+    [this.incompleteTodoList, this.completedTodoList].forEach(list => {
+      list.addEventListener('dragover', handleDragOver);
+      list.addEventListener('dragleave', handleDragLeave);
+      list.addEventListener('drop', handleDrop);
+    });
   }
 
   handleAddTodo() {
@@ -326,6 +416,19 @@ class TodoController {
     const li = document.createElement('li');
     li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
     li.setAttribute('data-priority', todo.priority);
+    li.setAttribute('draggable', 'true');
+    li.setAttribute('data-id', todo.id);
+
+    // ドラッグイベントを設定
+    li.addEventListener('dragstart', (e) => {
+      e.target.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', todo.id);
+    });
+    
+    li.addEventListener('dragend', (e) => {
+      e.target.classList.remove('dragging');
+    });
 
     // チェックボックス
     const checkbox = document.createElement('input');

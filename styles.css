@@ -446,6 +446,23 @@ button:hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   animation: slideIn 0.3s ease-out;
+  cursor: grab;
+  user-select: none;
+}
+
+.todo-item.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  background-color: var(--gray-light);
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.todo-list.drag-over {
+  padding: 1rem;
+  background-color: var(--gray-light);
+  border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
 @keyframes slideIn {
