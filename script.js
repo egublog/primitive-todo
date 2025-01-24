@@ -1,3 +1,23 @@
+// 翻訳データ
+const translations = {
+  ja: {
+    title: 'プリミティブTodo',
+    inputPlaceholder: '新しいタスクを入力',
+    addButton: '追加',
+    incompleteTasks: '未完了のタスク',
+    completedTasks: '完了したタスク',
+    deleteButton: '削除'
+  },
+  en: {
+    title: 'Primitive Todo',
+    inputPlaceholder: 'Enter new task',
+    addButton: 'Add',
+    incompleteTasks: 'Incomplete Tasks',
+    completedTasks: 'Completed Tasks',
+    deleteButton: 'Delete'
+  }
+};
+
 // TodoItemの型定義
 class TodoItem {
   constructor(text, completed = false) {
@@ -125,11 +145,37 @@ class TodoController {
     this.todoList.subscribe(() => this.render());
   }
 
-  // テーマの初期化
+  // 言語とテーマの初期化
   initializeTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedLang = localStorage.getItem('lang') || 'ja';
     document.documentElement.setAttribute('data-theme', savedTheme);
+    document.documentElement.setAttribute('lang', savedLang);
     this.updateThemeIcon(savedTheme);
+    this.updateLanguage(savedLang);
+  }
+
+  // 言語の更新
+  updateLanguage(lang) {
+    localStorage.setItem('lang', lang);
+    document.querySelector('h1').textContent = translations[lang].title;
+    this.todoInput.placeholder = translations[lang].inputPlaceholder;
+    this.addTodoButton.textContent = translations[lang].addButton;
+    document.querySelector('.incomplete-tag').textContent = translations[lang].incompleteTasks;
+    document.querySelector('.complete-tag').textContent = translations[lang].completedTasks;
+    
+    // 既存のTodoアイテムの削除ボタンテキストを更新
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.textContent = translations[lang].deleteButton;
+    });
+  }
+
+  // 言語の切り替え
+  toggleLanguage() {
+    const currentLang = document.documentElement.getAttribute('lang');
+    const newLang = currentLang === 'en' ? 'ja' : 'en';
+    document.documentElement.setAttribute('lang', newLang);
+    this.updateLanguage(newLang);
   }
 
   // テーマアイコンの更新
@@ -158,8 +204,9 @@ class TodoController {
       }
     });
 
-    // テーマ切り替えボタンのイベント
+    // テーマと言語切り替えボタンのイベント
     this.themeToggleButton.addEventListener('click', () => this.toggleTheme());
+    document.getElementById('toggleLang').addEventListener('click', () => this.toggleLanguage());
   }
 
   handleAddTodo() {
@@ -194,7 +241,8 @@ class TodoController {
     // 削除ボタン
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
-    deleteBtn.textContent = '削除';
+    const currentLang = document.documentElement.getAttribute('lang') || 'ja';
+    deleteBtn.textContent = translations[currentLang].deleteButton;
     deleteBtn.addEventListener('click', () => this.todoList.deleteTodo(todo.id));
 
     // 要素の組み立て

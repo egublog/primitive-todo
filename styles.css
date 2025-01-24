@@ -74,7 +74,13 @@ body {
   margin-bottom: 2.5rem;
 }
 
-.theme-toggle {
+.header-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.theme-toggle,
+.lang-toggle {
   background: var(--theme-toggle-bg);
   border: none;
   font-size: 1.5rem;
