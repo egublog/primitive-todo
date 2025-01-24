@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプルTodoアプリ</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>シンプルTodoアプリ</h1>
+        <div class="todo-input">
+            <input type="text" id="todoInput" placeholder="新しいタスクを入力">
+            <button id="addTodo">追加</button>
+        </div>
+        <div class="todo-sections">
+            <div class="todo-section">
+                <span class="section-tag incomplete-tag">未完了のタスク</span>
+                <ul id="incompleteTodoList" class="todo-list">
+                    <!-- 未完了のTodoアイテムがここに追加されます -->
+                </ul>
+            </div>
+            <div class="todo-section">
+                <span class="section-tag complete-tag">完了したタスク</span>
+                <ul id="completedTodoList" class="todo-list">
+                    <!-- 完了したTodoアイテムがここに追加されます -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
