@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>シンプルTodoアプリ</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <div class="container">
-        <h1>シンプルTodoアプリ</h1>
-        <div class="todo-input">
-            <input type="text" id="todoInput" placeholder="新しいタスクを入力">
-            <button id="addTodo">追加</button>
+      <h1>プリミティブTodo</h1>
+      <div class="todo-input">
+        <input type="text" id="todoInput" placeholder="新しいタスクを入力" />
+        <button id="addTodo">追加</button>
+      </div>
+      <div class="todo-sections">
+        <div class="todo-section">
+          <span class="section-tag incomplete-tag">未完了のタスク</span>
+          <ul id="incompleteTodoList" class="todo-list">
+            <!-- 未完了のTodoアイテムがここに追加されます -->
+          </ul>
         </div>
-        <div class="todo-sections">
-            <div class="todo-section">
-                <span class="section-tag incomplete-tag">未完了のタスク</span>
-                <ul id="incompleteTodoList" class="todo-list">
-                    <!-- 未完了のTodoアイテムがここに追加されます -->
-                </ul>
-            </div>
-            <div class="todo-section">
-                <span class="section-tag complete-tag">完了したタスク</span>
-                <ul id="completedTodoList" class="todo-list">
-                    <!-- 完了したTodoアイテムがここに追加されます -->
-                </ul>
-            </div>
+        <div class="todo-section">
+          <span class="section-tag complete-tag">完了したタスク</span>
+          <ul id="completedTodoList" class="todo-list">
+            <!-- 完了したTodoアイテムがここに追加されます -->
+          </ul>
         </div>
+      </div>
     </div>
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
