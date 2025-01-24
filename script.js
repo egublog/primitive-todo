@@ -4,8 +4,8 @@ const translations = {
     title: 'プリミティブTodo',
     inputPlaceholder: '新しいタスクを入力',
     addButton: '追加',
-    incompleteTasks: '未完了のタスク',
-    completedTasks: '完了したタスク',
+    incomplete: '未完了',
+    completed: '完了',
     deleteButton: '削除',
     noDueDate: '期限なし',
     dueDate: '期限：',
@@ -20,8 +20,8 @@ const translations = {
     title: 'Primitive Todo',
     inputPlaceholder: 'Enter new task',
     addButton: 'Add',
-    incompleteTasks: 'Incomplete Tasks',
-    completedTasks: 'Completed Tasks',
+    incomplete: 'Incomplete',
+    completed: 'Completed',
     deleteButton: 'Delete',
     noDueDate: 'No due date',
     dueDate: 'Due: ',
@@ -204,8 +204,8 @@ class TodoController {
     document.querySelector('h1').textContent = translations[lang].title;
     this.todoInput.placeholder = translations[lang].inputPlaceholder;
     this.addTodoButton.textContent = translations[lang].addButton;
-    document.querySelector('.incomplete-tag').textContent = translations[lang].incompleteTasks;
-    document.querySelector('.complete-tag').textContent = translations[lang].completedTasks;
+    document.querySelector('.incomplete-tag').textContent = translations[lang].incomplete;
+    document.querySelector('.complete-tag').textContent = translations[lang].completed;
     
     // 優先度選択肢の更新
     document.querySelectorAll('#prioritySelect option').forEach(option => {
