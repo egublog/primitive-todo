@@ -26,7 +26,14 @@
         </div>
       </div>
       <div class="todo-input">
-        <input type="text" id="todoInput" placeholder="新しいタスクを入力" />
+        <div class="input-group">
+          <input type="text" id="todoInput" placeholder="新しいタスクを入力" />
+          <select id="prioritySelect" class="priority-select">
+            <option value="low">低</option>
+            <option value="medium" selected>中</option>
+            <option value="high">高</option>
+          </select>
+        </div>
         <button id="addTodo">追加</button>
       </div>
       <div class="todo-sections">

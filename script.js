@@ -20,8 +20,9 @@ const translations = {
 
 // TodoItemの型定義
 class TodoItem {
-  constructor(text, completed = false) {
+  constructor(text, priority = 'medium', completed = false) {
     this.text = text;
+    this.priority = priority;
     this.completed = completed;
     this.id = Date.now().toString(); // ユニークID
   }
@@ -69,10 +70,10 @@ class TodoList {
   }
 
   // Todo追加
-  addTodo(text) {
+  addTodo(text, priority) {
     if (!text.trim()) return false;
     
-    const todo = new TodoItem(text);
+    const todo = new TodoItem(text, priority);
     this.todos.push(todo);
     this.save();
     this.notify();
@@ -124,6 +125,7 @@ class TodoController {
   constructor() {
     // DOMの参照を保持
     this.todoInput = document.getElementById('todoInput');
+    this.prioritySelect = document.getElementById('prioritySelect');
     this.addTodoButton = document.getElementById('addTodo');
     this.incompleteTodoList = document.getElementById('incompleteTodoList');
     this.completedTodoList = document.getElementById('completedTodoList');
@@ -210,7 +212,10 @@ class TodoController {
   }
 
   handleAddTodo() {
-    const success = this.todoList.addTodo(this.todoInput.value);
+    const success = this.todoList.addTodo(
+      this.todoInput.value,
+      this.prioritySelect.value
+    );
     if (success) {
       this.todoInput.value = '';
     }
@@ -220,6 +225,7 @@ class TodoController {
   createTodoElement(todo) {
     const li = document.createElement('li');
     li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+    li.setAttribute('data-priority', todo.priority);
 
     // チェックボックス
     const checkbox = document.createElement('input');
@@ -232,6 +238,16 @@ class TodoController {
     const todoText = document.createElement('span');
     todoText.className = 'todo-text';
     todoText.textContent = todo.text;
+
+    // 優先度インジケーター
+    const priorityIndicator = document.createElement('span');
+    priorityIndicator.className = `priority-indicator priority-${todo.priority}`;
+    priorityIndicator.textContent = {
+      high: '高',
+      medium: '中',
+      low: '低'
+    }[todo.priority];
+    todoText.appendChild(priorityIndicator);
 
     // 編集機能
     if (!todo.completed) {
