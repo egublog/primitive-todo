@@ -253,10 +253,8 @@ class TodoController {
       placeholder: lang === 'ja' ? '期限を選択' : 'Select due date'
     });
 
-    // 既存のTodoアイテムの削除ボタンテキストを更新
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.innerHTML = `<i class="fas fa-trash"></i> ${translations[lang].deleteButton}`;
-    });
+    // 全てのTodoアイテムを再描画して言語を更新
+    this.render();
   }
 
   // 言語の切り替え
