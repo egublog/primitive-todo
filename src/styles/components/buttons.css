@@ -1,85 +1,131 @@
+/* 基本ボタンスタイル */
 button {
+  --button-height: 44px; /* タッチターゲットの最小サイズ */
+  min-height: var(--button-height);
   padding: 0.75rem 1.5rem;
   background: var(--primary-color);
-  color: white;
+  color: var(--button-text-color, white);
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
-  font-family: "Noto Sans JP", sans-serif;
-  display: flex;
+  font-size: var(--font-sm);
+  transition: all var(--transition-base);
+  box-shadow: var(--button-shadow, 0 2px 4px rgba(99, 102, 241, 0.2));
+  font-family: inherit;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  height: fit-content;
-  align-self: flex-end;
+  position: relative;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
 }
 
+/* アイコン */
 button i {
-  font-size: 1rem;
+  font-size: var(--font-base);
+  pointer-events: none;
 }
 
+/* インタラクション状態 */
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4),
-    0 4px 8px rgba(99, 102, 241, 0.3);
+  box-shadow: var(--button-shadow-hover, 0 6px 20px rgba(99, 102, 241, 0.4));
   background: var(--primary-hover);
 }
 
+button:active {
+  transform: translateY(0);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+/* 無効状態 */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 削除ボタン */
 .delete-btn {
-  background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2), 0 2px 4px rgba(239, 68, 68, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 44px;
-  justify-content: center;
+  --button-height: 36px;
+  background: var(--danger-gradient, linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%));
+  padding: 0.5rem 1rem;
+  font-size: var(--font-sm);
+  box-shadow: var(--danger-shadow, 0 4px 8px rgba(239, 68, 68, 0.2));
+  min-width: var(--button-height);
 }
 
 .delete-btn i {
-  font-size: 0.9rem;
+  font-size: var(--font-sm);
 }
 
 .delete-btn:hover {
-  background: linear-gradient(135deg, #dc2626 0%, var(--danger-color) 100%);
-  box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3),
-    0 3px 6px rgba(239, 68, 68, 0.2);
+  background: var(--danger-gradient-hover, linear-gradient(135deg, #dc2626 0%, var(--danger-color) 100%));
+  box-shadow: var(--danger-shadow-hover, 0 6px 12px rgba(239, 68, 68, 0.3));
 }
 
+.delete-btn:focus-visible {
+  outline-color: var(--danger-color);
+}
+
+/* ヘッダーボタン */
 .header-buttons {
   display: flex;
   gap: 1rem;
 }
 
+/* テーマ切り替え・言語切り替えボタン */
 .theme-toggle,
 .lang-toggle {
+  --button-size: 48px;
   background: var(--theme-toggle-bg);
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.5rem;
+  padding: 0;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: var(--button-size);
+  height: var(--button-size);
+  font-size: var(--font-lg);
+  box-shadow: var(--theme-toggle-shadow, 0 2px 8px rgba(0, 0, 0, 0.1));
 }
 
 .theme-toggle i,
 .lang-toggle i {
   color: var(--text-color);
+  transition: transform var(--transition-base);
 }
 
-.theme-toggle:hover {
-  background: var(--gray-light);
+.theme-toggle:hover i,
+.lang-toggle:hover i {
+  transform: scale(1.1);
+}
+
+.theme-toggle:hover,
+.lang-toggle:hover {
+  background: var(--theme-toggle-hover-bg, var(--gray-light));
   transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--theme-toggle-shadow-hover, 0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 480px) {
+  button {
+    padding: 0.5rem 1rem;
+    font-size: var(--font-xs);
+  }
+
+  .theme-toggle,
+  .lang-toggle {
+    --button-size: 40px;
+    font-size: var(--font-base);
+  }
 }

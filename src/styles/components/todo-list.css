@@ -1,53 +1,102 @@
-.todo-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.todo-section {
-  background: var(--section-bg);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.02);
-  border: 1px solid var(--item-border);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.section-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1.2rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: white;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-  letter-spacing: 0.5px;
-}
-
-.incomplete-tag {
-  background: linear-gradient(
+:root {
+  /* セクション設定 */
+  --section-padding: clamp(1rem, 5vw, 2rem);
+  --section-border-radius: 16px;
+  --section-gap: clamp(1rem, 5vw, 2rem);
+  --section-border-width: 1px;
+  
+  /* タグ設定 */
+  --tag-padding: 0.5rem 1.2rem;
+  --tag-border-radius: 12px;
+  --tag-margin: 0 0 1.5rem 0;
+  --tag-font-size: var(--font-sm);
+  
+  /* グラデーション */
+  --incomplete-gradient: linear-gradient(
     135deg,
     var(--primary-color) 0%,
     var(--primary-hover) 100%
   );
+  --complete-gradient: linear-gradient(
+    135deg,
+    var(--success-color) 0%,
+    #059669 100%
+  );
+}
+
+/* リストセクション */
+.todo-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+  width: min(100%, 800px);
+  margin-inline: auto;
+  padding-block: 1rem;
+}
+
+/* セクション */
+.todo-section {
+  background: var(--section-bg);
+  border-radius: var(--section-border-radius);
+  padding: var(--section-padding);
+  box-shadow: var(--shadow-lg);
+  border: var(--section-border-width) solid var(--item-border);
+  transition: transform var(--transition-base),
+              box-shadow var(--transition-base);
+}
+
+.todo-section:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* セクションタグ */
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--tag-padding);
+  font-size: var(--tag-font-size);
+  font-weight: 500;
+  color: white;
+  border-radius: var(--tag-border-radius);
+  margin: var(--tag-margin);
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+.incomplete-tag {
+  background: var(--incomplete-gradient);
 }
 
 .complete-tag {
-  background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+  background: var(--complete-gradient);
 }
 
+/* Todoリスト */
 .todo-list {
   list-style: none;
+  padding: 0;
+  margin: 0;
+  min-height: 50px; /* ドラッグ&ドロップのための最小高さ */
 }
 
+/* フィルター */
 .category-filter {
   margin: -0.5rem 0 2rem;
   display: flex;
   justify-content: flex-end;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 0.5rem;
+  background: var(--bg-color);
+  border-radius: var(--input-border-radius);
+  transition: box-shadow var(--transition-base);
+}
+
+.category-filter:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .category-filter-select {
@@ -55,8 +104,69 @@
   background: var(--bg-color);
 }
 
-@media (max-width: 768px) {
+/* 空の状態 */
+.todo-list:empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  border: 2px dashed var(--item-border);
+  border-radius: var(--input-border-radius);
+  margin: 1rem 0;
+}
+
+.todo-list:empty::before {
+  content: "タスクがありません";
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 768px) {
   .todo-sections {
-    grid-template-columns: 1fr;
+    gap: 1rem;
   }
+
+  .todo-section {
+    padding: 1rem;
+  }
+
+  .section-tag {
+    padding: 0.4rem 1rem;
+    font-size: var(--font-xs);
+  }
+
+  .category-filter {
+    position: static;
+    margin: 0 0 1rem;
+    justify-content: stretch;
+  }
+
+  .category-filter-select {
+    width: 100%;
+  }
+}
+
+/* アクセシビリティ対応 */
+@media (prefers-reduced-motion: reduce) {
+  .todo-section,
+  .category-filter {
+    transition: none;
+  }
+}
+
+/* ドラッグ&ドロップ状態 */
+.todo-list.dragging {
+  background-color: var(--gray-light);
+  border-radius: var(--input-border-radius);
+}
+
+.todo-item.dragging {
+  opacity: 0.5;
+}
+
+/* フォーカス管理 */
+.todo-section:focus-within {
+  outline: var(--input-focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
 }

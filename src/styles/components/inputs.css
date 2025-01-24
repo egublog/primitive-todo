@@ -1,13 +1,24 @@
+/* フォーム基本設定 */
+:root {
+  --input-height: 44px;
+  --input-border-radius: 8px;
+  --input-padding: 0.75rem 1rem;
+  --input-font-size: var(--font-base);
+  --input-border-width: 1px;
+  --input-focus-ring-width: 2px;
+  --input-transition: var(--transition-base);
+}
+
 .todo-input {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-block: 2rem;
   background: var(--input-bg);
-  padding: 2rem;
+  padding: clamp(1rem, 5vw, 2rem);
   border-radius: 16px;
-  border: 1px solid var(--item-border);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  border: var(--input-border-width) solid var(--item-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .input-group {
@@ -22,57 +33,106 @@
   gap: 1rem;
 }
 
-#todoInput {
+/* 入力フィールド共通スタイル */
+.input-base {
   width: 100%;
-  padding: 1rem 1.25rem;
-  font-size: 1rem;
-  border: 1px solid var(--item-border);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  font-family: "Noto Sans JP", sans-serif;
+  min-height: var(--input-height);
+  padding: var(--input-padding);
+  font-size: var(--input-font-size);
+  font-family: inherit;
+  border: var(--input-border-width) solid var(--item-border);
+  border-radius: var(--input-border-radius);
   background-color: var(--item-bg);
   color: var(--text-color);
+  transition: var(--input-transition);
 }
 
-#todoInput:focus {
-  outline: none;
+.input-base:focus-visible {
+  outline: var(--input-focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
 }
 
+.input-base:hover {
+  border-color: var(--primary-color);
+}
+
+.input-base::placeholder {
+  color: var(--gray-dark);
+  opacity: 0.7;
+}
+
+/* メインの入力フィールド */
+#todoInput {
+  font-size: var(--font-lg);
+  padding: 1rem 1.25rem;
+  width: 100%;
+  min-height: var(--input-height);
+  font-family: inherit;
+  border: var(--input-border-width) solid var(--item-border);
+  border-radius: var(--input-border-radius);
+  background-color: var(--item-bg);
+  color: var(--text-color);
+  transition: var(--input-transition);
+}
+
+#todoInput:focus-visible {
+  outline: var(--input-focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-color: var(--primary-color);
+}
+
+#todoInput:hover {
+  border-color: var(--primary-color);
+}
+
+/* バリデーション状態 */
+.input-base:invalid,
+#todoInput:invalid {
+  border-color: var(--danger-color);
+}
+
+.input-base:invalid:focus-visible,
+#todoInput:invalid:focus-visible {
+  outline-color: var(--danger-color);
+}
+
+/* セレクトフィールド */
 .priority-select,
 .category-select,
 .category-filter-select {
-  padding: 0.75rem;
-  border: 1px solid var(--item-border);
-  border-radius: 8px;
-  font-family: "Noto Sans JP", sans-serif;
-  background-color: var(--item-bg);
-  color: var(--text-color);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
-}
-
-.priority-select:focus,
-.category-select:focus,
-.category-filter-select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-}
-
-.date-input {
-  padding: 0.75rem;
-  border: 1px solid var(--item-border);
-  border-radius: 8px;
-  font-family: "Noto Sans JP", sans-serif;
-  background-color: var(--item-bg);
-  color: var(--text-color);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
   width: 100%;
+  min-height: var(--input-height);
+  padding: var(--input-padding);
+  font-size: var(--input-font-size);
+  font-family: inherit;
+  border: var(--input-border-width) solid var(--item-border);
+  border-radius: var(--input-border-radius);
+  background-color: var(--item-bg);
+  color: var(--text-color);
+  transition: var(--input-transition);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+/* 日付入力フィールド */
+.date-input {
+  width: 100%;
+  min-height: var(--input-height);
+  padding: var(--input-padding);
+  font-size: var(--input-font-size);
+  font-family: inherit;
+  border: var(--input-border-width) solid var(--item-border);
+  border-radius: var(--input-border-radius);
+  background-color: var(--item-bg);
+  color: var(--text-color);
+  transition: var(--input-transition);
+  cursor: pointer;
+  position: relative;
 }
 
 .date-input::-webkit-calendar-picker-indicator {
@@ -97,45 +157,61 @@
   filter: invert(1);
 }
 
+/* 編集モードの入力フィールド */
 .edit-input {
   flex: 1;
-  margin: 0 1rem;
+  margin-inline: 1rem;
   padding: 0.8rem 1rem;
-  font-size: 1.1rem;
-  border: 2px solid var(--primary-color);
-  border-radius: 8px;
-  outline: none;
+  font-size: var(--font-lg);
+  border-width: 2px;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  min-height: var(--input-height);
+  font-family: inherit;
+  border-radius: var(--input-border-radius);
   background-color: var(--item-bg);
   color: var(--text-color);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: "Noto Sans JP", sans-serif;
+  transition: var(--input-transition);
 }
 
-.edit-input:focus {
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2),
-    inset 0 2px 4px rgba(0, 0, 0, 0.02);
+.edit-input:focus-visible {
+  box-shadow: var(--shadow-md);
+  outline: var(--input-focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
 }
 
-/* flatpickrのカスタマイズ */
+/* Flatpickrカスタマイズ */
 .flatpickr-input {
-  background-color: var(--item-bg) !important;
-  color: var(--text-color) !important;
-  border: 1px solid var(--item-border) !important;
-  border-radius: 8px !important;
-  font-family: "Noto Sans JP", sans-serif !important;
-  padding: 0.75rem !important;
-  cursor: pointer !important;
-  font-size: 0.95rem !important;
-  width: 100% !important;
+  width: 100%;
+  min-height: var(--input-height);
+  padding: var(--input-padding);
+  font-size: var(--input-font-size);
+  font-family: inherit;
+  border: var(--input-border-width) solid var(--item-border);
+  border-radius: var(--input-border-radius);
+  background-color: var(--item-bg);
+  color: var(--text-color);
+  transition: var(--input-transition);
+}
+
+/* カレンダーのスタイル */
+:root {
+  --calendar-bg: var(--item-bg);
+  --calendar-border: var(--item-border);
+  --calendar-shadow: var(--shadow-lg);
+  --calendar-selected-bg: var(--primary-color);
+  --calendar-hover-bg: var(--gray-light);
 }
 
 .flatpickr-calendar {
-  background-color: var(--item-bg) !important;
+  background-color: var(--calendar-bg) !important;
   color: var(--text-color) !important;
-  border: 1px solid var(--item-border) !important;
+  border: var(--input-border-width) solid var(--calendar-border) !important;
   border-radius: 12px !important;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
-  font-family: "Noto Sans JP", sans-serif !important;
+  box-shadow: var(--calendar-shadow) !important;
+  font-family: inherit !important;
+  padding: 1rem !important;
 }
 
 .flatpickr-day {
@@ -182,14 +258,52 @@
   background-color: var(--gray-light) !important;
 }
 
-@media (max-width: 768px) {
+/* レスポンシブ対応 */
+@media screen and (max-width: 768px) {
+  .todo-input {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .select-group {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .input-base,
+  #todoInput,
+  .priority-select,
+  .category-select,
+  .category-filter-select,
+  .date-input {
+    font-size: var(--font-sm);
+    padding: 0.75rem;
+  }
+
+  #todoInput {
+    font-size: var(--font-base);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .todo-input {
+    padding: 1rem;
+  }
+
   .select-group {
     grid-template-columns: 1fr;
   }
+}
 
+/* アクセシビリティ対応 */
+@media (prefers-reduced-motion: reduce) {
+  .input-base,
   #todoInput,
-  button {
-    font-size: 1rem;
-    padding: 1rem 1.2rem;
+  .priority-select,
+  .category-select,
+  .category-filter-select,
+  .date-input,
+  .edit-input {
+    transition: none;
   }
 }

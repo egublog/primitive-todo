@@ -12,75 +12,90 @@
     />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="./styles/main.css" />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
   </head>
   <body>
     <div class="container">
-      <div class="header">
-        <h1>プリミティブTodo</h1>
+      <header class="header">
+        <h1 id="appTitle">プリミティブTodo</h1>
         <div class="header-buttons">
-          <button id="toggleTheme" class="theme-toggle">
-            <i class="fas fa-moon"></i>
+          <button id="toggleTheme" class="theme-toggle" aria-label="テーマ切り替え">
+            <i class="fas fa-moon" aria-hidden="true"></i>
           </button>
-          <button id="toggleLang" class="lang-toggle">
-            <i class="fas fa-language"></i>
+          <button id="toggleLang" class="lang-toggle" aria-label="言語切り替え">
+            <i class="fas fa-language" aria-hidden="true"></i>
           </button>
         </div>
-      </div>
-      <div class="todo-input">
-        <div class="input-group">
-          <input type="text" id="todoInput" placeholder="新しいタスクを入力" />
-          <div class="select-group">
-            <select id="prioritySelect" class="priority-select">
-              <option value="low" data-ja="低" data-en="Low">低</option>
-              <option value="medium" selected data-ja="中" data-en="Medium">中</option>
-              <option value="high" data-ja="高" data-en="High">高</option>
-            </select>
-            <select id="categorySelect" class="category-select">
-              <option value="none" data-ja="カテゴリなし" data-en="No Category">カテゴリなし</option>
-              <option value="work" data-ja="仕事" data-en="Work">仕事</option>
-              <option value="personal" data-ja="個人" data-en="Personal">個人</option>
-              <option value="shopping" data-ja="買い物" data-en="Shopping">買い物</option>
-              <option value="study" data-ja="学習" data-en="Study">学習</option>
-            </select>
+      </header>
+      <main>
+        <form class="todo-input" role="form" aria-label="タスク入力フォーム">
+          <div class="input-group">
+            <label for="todoInput" class="visually-hidden">タスク名</label>
             <input 
-              type="date" 
-              id="dueDateInput" 
-              class="date-input" 
-              lang="ja"
-              pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+              type="text" 
+              id="todoInput" 
+              placeholder="新しいタスクを入力" 
+              aria-required="true"
             />
+            <div class="select-group">
+              <label for="prioritySelect" class="visually-hidden">優先度</label>
+              <select id="prioritySelect" class="priority-select" aria-label="優先度選択">
+                <option value="low" data-ja="低" data-en="Low">低</option>
+                <option value="medium" selected data-ja="中" data-en="Medium">中</option>
+                <option value="high" data-ja="高" data-en="High">高</option>
+              </select>
+              <label for="categorySelect" class="visually-hidden">カテゴリー</label>
+              <select id="categorySelect" class="category-select" aria-label="カテゴリー選択">
+                <option value="none" data-ja="カテゴリなし" data-en="No Category">カテゴリなし</option>
+                <option value="work" data-ja="仕事" data-en="Work">仕事</option>
+                <option value="personal" data-ja="個人" data-en="Personal">個人</option>
+                <option value="shopping" data-ja="買い物" data-en="Shopping">買い物</option>
+                <option value="study" data-ja="学習" data-en="Study">学習</option>
+              </select>
+              <label for="dueDateInput" class="visually-hidden">期限日</label>
+              <input 
+                type="date" 
+                id="dueDateInput" 
+                class="date-input" 
+                lang="ja"
+                pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                aria-label="期限日選択"
+              />
+            </div>
           </div>
+          <button id="addTodo" type="submit" aria-label="タスクを追加">
+            <i class="fas fa-plus" aria-hidden="true"></i> 追加
+          </button>
+        </form>
+        <nav class="category-filter" aria-label="カテゴリーフィルター">
+          <label for="categoryFilter" class="visually-hidden">表示カテゴリー</label>
+          <select id="categoryFilter" class="category-filter-select" aria-label="表示カテゴリーの選択">
+            <option value="all" data-ja="すべて" data-en="All">すべて</option>
+            <option value="none" data-ja="カテゴリなし" data-en="No Category">カテゴリなし</option>
+            <option value="work" data-ja="仕事" data-en="Work">仕事</option>
+            <option value="personal" data-ja="個人" data-en="Personal">個人</option>
+            <option value="shopping" data-ja="買い物" data-en="Shopping">買い物</option>
+            <option value="study" data-ja="学習" data-en="Study">学習</option>
+          </select>
+        </nav>
+        <div class="todo-sections" role="region" aria-label="Todoリスト">
+          <section class="todo-section">
+            <h2 id="incompleteTag" class="section-tag incomplete-tag">未完了</h2>
+            <ul id="incompleteTodoList" class="todo-list" role="list">
+              <!-- 未完了のTodoアイテムがここに追加されます -->
+            </ul>
+          </section>
+          <section class="todo-section">
+            <h2 id="completeTag" class="section-tag complete-tag">完了</h2>
+            <ul id="completedTodoList" class="todo-list" role="list">
+              <!-- 完了したTodoアイテムがここに追加されます -->
+            </ul>
+          </section>
         </div>
-        <button id="addTodo"><i class="fas fa-plus"></i> 追加</button>
-      </div>
-      <div class="category-filter">
-        <select id="categoryFilter" class="category-filter-select">
-          <option value="all" data-ja="すべて" data-en="All">すべて</option>
-          <option value="none" data-ja="カテゴリなし" data-en="No Category">カテゴリなし</option>
-          <option value="work" data-ja="仕事" data-en="Work">仕事</option>
-          <option value="personal" data-ja="個人" data-en="Personal">個人</option>
-          <option value="shopping" data-ja="買い物" data-en="Shopping">買い物</option>
-          <option value="study" data-ja="学習" data-en="Study">学習</option>
-        </select>
-      </div>
-      <div class="todo-sections">
-        <div class="todo-section">
-          <span class="section-tag incomplete-tag">未完了</span>
-          <ul id="incompleteTodoList" class="todo-list">
-            <!-- 未完了のTodoアイテムがここに追加されます -->
-          </ul>
-        </div>
-        <div class="todo-section">
-          <span class="section-tag complete-tag">完了</span>
-          <ul id="completedTodoList" class="todo-list">
-            <!-- 完了したTodoアイテムがここに追加されます -->
-          </ul>
-        </div>
-      </div>
+      </main>
     </div>
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="./js/app.js"></script>
   </body>
 </html>

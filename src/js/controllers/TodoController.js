@@ -1,42 +1,131 @@
 import { TodoList } from '../models/TodoList.js';
 import { translations } from '../i18n/translations.js';
 
+/**
+ * Todoアプリケーションのコントローラークラス
+ */
 export class TodoController {
+  /** @type {Object.<string, HTMLElement>} */
+  elements = {};
+
+  /** @type {Object.<string, Function>} */
+  handlers = {};
+
+  /**
+   * コンストラクタ
+   */
   constructor() {
-    // DOMの参照を保持
-    this.todoInput = document.getElementById('todoInput');
-    this.prioritySelect = document.getElementById('prioritySelect');
-    this.categorySelect = document.getElementById('categorySelect');
-    this.categoryFilter = document.getElementById('categoryFilter');
-    this.dueDateInput = document.getElementById('dueDateInput');
-    this.addTodoButton = document.getElementById('addTodo');
-    this.incompleteTodoList = document.getElementById('incompleteTodoList');
-    this.completedTodoList = document.getElementById('completedTodoList');
-    this.themeToggleButton = document.getElementById('toggleTheme');
-
-    // モデルのインスタンス化
-    this.todoList = new TodoList();
-
-    // flatpickrの初期化
-    this.initializeDatePicker();
-
-    // イベントリスナーの設定
+    this.initializeElements();
+    this.initializeModel();
+    this.initializeHandlers();
     this.setupEventListeners();
+    this.initializeUI();
+  }
 
-    // テーマの初期化
-    this.initializeTheme();
+  /**
+   * DOM要素の初期化
+   * @private
+   */
+  initializeElements() {
+    const elements = {
+      todoInput: 'todoInput',
+      prioritySelect: 'prioritySelect',
+      categorySelect: 'categorySelect',
+      categoryFilter: 'categoryFilter',
+      dueDateInput: 'dueDateInput',
+      addTodoButton: 'addTodo',
+      incompleteTodoList: 'incompleteTodoList',
+      completedTodoList: 'completedTodoList',
+      themeToggleButton: 'toggleTheme',
+      langToggleButton: 'toggleLang',
+      title: 'appTitle',
+      incompleteTag: 'incompleteTag',
+      completeTag: 'completeTag'
+    };
 
-    // モデルの変更を監視（loadの前に設定）
+    for (const [key, id] of Object.entries(elements)) {
+      const element = document.getElementById(id);
+      if (!element) {
+        console.error(`要素が見つかりません: ${id}`);
+        continue;
+      }
+      this.elements[key] = element;
+    }
+  }
+
+  /**
+   * モデルの初期化
+   * @private
+   */
+  initializeModel() {
+    this.todoList = new TodoList();
+    
+    // エラーハンドラーの設定
+    this.todoList.onError('add', error => this.showError('追加エラー', error.message));
+    this.todoList.onError('update', error => this.showError('更新エラー', error.message));
+    this.todoList.onError('load', error => this.showError('読み込みエラー', error.message));
+    this.todoList.onError('save', error => this.showError('保存エラー', error.message));
+
+    // モデルの変更を監視
     this.todoList.subscribe(() => this.render());
 
-    // 初期データの読み込み（subscribeの後に実行）
+    // 初期データの読み込み
     this.todoList.load();
   }
 
-  // flatpickrの初期化
+  /**
+   * イベントハンドラーの初期化
+   * @private
+   */
+  initializeHandlers() {
+    this.handlers = {
+      addTodo: this.handleAddTodo.bind(this),
+      toggleTheme: this.handleThemeToggle.bind(this),
+      toggleLanguage: this.handleLanguageToggle.bind(this),
+      filterChange: this.handleFilterChange.bind(this),
+      keyPress: this.handleKeyPress.bind(this)
+    };
+  }
+
+  /**
+   * UIの初期化
+   * @private
+   */
+  initializeUI() {
+    this.initializeDatePicker();
+    this.initializeTheme();
+    this.initializeAccessibility();
+  }
+
+  /**
+   * アクセシビリティの初期化
+   * @private
+   */
+  initializeAccessibility() {
+    // フォーム要素のラベル関連付け
+    this.elements.todoInput.setAttribute('aria-label', '新しいタスク');
+    this.elements.addTodoButton.setAttribute('aria-label', 'タスクを追加');
+
+    // ライブリージョンの設定
+    this.elements.incompleteTodoList.setAttribute('aria-live', 'polite');
+    this.elements.completedTodoList.setAttribute('aria-live', 'polite');
+
+    // キーボードナビゲーションの改善
+    this.elements.todoInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab' && !e.shiftKey) {
+        e.preventDefault();
+        this.elements.prioritySelect.focus();
+      }
+    });
+  }
+
+  /**
+   * flatpickrの初期化
+   * @private
+   */
   initializeDatePicker() {
-    const lang = localStorage.getItem('lang') || 'ja';
-    this.datePicker = flatpickr(this.dueDateInput, {
+    const lang = this.getCurrentLanguage();
+    this.datePicker = flatpickr(this.elements.dueDateInput, {
       dateFormat: 'Y-m-d',
       locale: lang === 'ja' ? 'ja' : 'default',
       disableMobile: true,
@@ -44,72 +133,162 @@ export class TodoController {
       minDate: 'today',
       altInput: true,
       altFormat: lang === 'ja' ? 'Y年m月d日' : 'F j, Y',
-      placeholder: lang === 'ja' ? '期限を選択' : 'Select due date'
+      placeholder: translations[lang].datePlaceholder,
+      onChange: (selectedDates) => {
+        this.elements.dueDateInput.setAttribute(
+          'aria-label',
+          `選択された日付: ${this.formatDueDate(selectedDates[0], lang)}`
+        );
+      }
     });
   }
 
-  // 言語とテーマの初期化
+  /**
+   * テーマの初期化
+   * @private
+   */
   initializeTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     const savedLang = localStorage.getItem('lang') || 'ja';
+    
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.documentElement.setAttribute('lang', savedLang);
+    
     this.updateThemeIcon(savedTheme);
     this.updateLanguage(savedLang);
   }
 
-  // 言語の更新
+  /**
+   * イベントリスナーの設定
+   * @private
+   */
+  setupEventListeners() {
+    // フォームイベント
+    this.elements.addTodoButton.addEventListener('click', this.handlers.addTodo);
+    this.elements.todoInput.addEventListener('keypress', this.handlers.keyPress);
+    this.elements.categoryFilter.addEventListener('change', this.handlers.filterChange);
+
+    // テーマと言語の切り替え
+    this.elements.themeToggleButton.addEventListener('click', this.handlers.toggleTheme);
+    this.elements.langToggleButton.addEventListener('click', this.handlers.toggleLanguage);
+
+    // フォームのバリデーション
+    this.elements.todoInput.addEventListener('input', () => {
+      const isValid = this.elements.todoInput.value.trim().length > 0;
+      this.elements.addTodoButton.disabled = !isValid;
+      this.elements.todoInput.setAttribute('aria-invalid', (!isValid).toString());
+    });
+  }
+
+  /**
+   * エラーメッセージの表示
+   * @private
+   * @param {string} title エラータイトル
+   * @param {string} message エラーメッセージ
+   */
+  showError(title, message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.setAttribute('role', 'alert');
+    errorDiv.innerHTML = `
+      <strong>${title}</strong>
+      <p>${message}</p>
+    `;
+    
+    document.body.appendChild(errorDiv);
+    setTimeout(() => errorDiv.remove(), 5000);
+  }
+
+  /**
+   * 現在の言語を取得
+   * @private
+   * @returns {string}
+   */
+  getCurrentLanguage() {
+    return document.documentElement.getAttribute('lang') || 'ja';
+  }
+
+  /**
+   * 言語の更新
+   * @private
+   * @param {string} lang
+   */
   updateLanguage(lang) {
     localStorage.setItem('lang', lang);
-    document.querySelector('h1').textContent = translations[lang].title;
-    this.todoInput.placeholder = translations[lang].inputPlaceholder;
-    this.addTodoButton.textContent = translations[lang].addButton;
-    document.querySelector('.incomplete-tag').textContent = translations[lang].incomplete;
-    document.querySelector('.complete-tag').textContent = translations[lang].completed;
-    
-    // 優先度選択肢の更新
-    document.querySelectorAll('#prioritySelect option').forEach(option => {
-      option.textContent = option.getAttribute(`data-${lang}`);
+
+    // テキストの更新
+    const elements = {
+      title: translations[lang].title,
+      todoInput: { placeholder: translations[lang].inputPlaceholder },
+      addTodoButton: { textContent: translations[lang].addButton },
+      incompleteTag: { textContent: translations[lang].incomplete },
+      completeTag: { textContent: translations[lang].completed }
+    };
+
+    for (const [key, value] of Object.entries(elements)) {
+      if (typeof value === 'string') {
+        this.elements[key].textContent = value;
+      } else {
+        Object.assign(this.elements[key], value);
+      }
+    }
+
+    // セレクトボックスの更新
+    ['prioritySelect', 'categorySelect', 'categoryFilter'].forEach(selectId => {
+      this.elements[selectId].querySelectorAll('option').forEach(option => {
+        option.textContent = option.getAttribute(`data-${lang}`);
+      });
     });
 
-    // カテゴリ選択肢の更新
-    document.querySelectorAll('#categorySelect option, #categoryFilter option').forEach(option => {
-      option.textContent = option.getAttribute(`data-${lang}`);
-    });
-
-    // flatpickrのロケールを更新
+    // flatpickrの更新
     this.datePicker.destroy();
-    this.datePicker = flatpickr(this.dueDateInput, {
-      dateFormat: 'Y-m-d',
-      locale: lang === 'ja' ? 'ja' : 'default',
-      disableMobile: true,
-      defaultDate: 'today',
-      minDate: 'today',
-      altInput: true,
-      altFormat: lang === 'ja' ? 'Y年m月d日' : 'F j, Y',
-      placeholder: lang === 'ja' ? '期限を選択' : 'Select due date'
-    });
+    this.initializeDatePicker();
 
-    // 全てのTodoアイテムを再描画して言語を更新
+    // 全てのTodoアイテムを再描画
     this.render();
   }
 
-  // 言語の切り替え
-  toggleLanguage() {
-    const currentLang = document.documentElement.getAttribute('lang');
-    const newLang = currentLang === 'en' ? 'ja' : 'en';
-    document.documentElement.setAttribute('lang', newLang);
-    this.updateLanguage(newLang);
-  }
-
-  // テーマアイコンの更新
+  /**
+   * テーマアイコンの更新
+   * @private
+   * @param {string} theme
+   */
   updateThemeIcon(theme) {
-    const icon = this.themeToggleButton.querySelector('i');
+    const icon = this.elements.themeToggleButton.querySelector('i');
     icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    this.elements.themeToggleButton.setAttribute(
+      'aria-label',
+      theme === 'dark' ? 'ライトモードに切り替え' : 'ダークモードに切り替え'
+    );
   }
 
-  // テーマの切り替え
-  toggleTheme() {
+  /**
+   * イベントハンドラー
+   */
+  handleAddTodo() {
+    const text = this.elements.todoInput.value;
+    if (!text.trim()) {
+      this.elements.todoInput.setAttribute('aria-invalid', 'true');
+      return;
+    }
+
+    try {
+      this.todoList.addTodo(
+        text,
+        this.elements.prioritySelect.value,
+        this.elements.dueDateInput.value || null,
+        this.elements.categorySelect.value
+      );
+      
+      this.elements.todoInput.value = '';
+      this.elements.dueDateInput.value = '';
+      this.elements.todoInput.focus();
+    } catch (error) {
+      this.showError('追加エラー', error.message);
+    }
+  }
+
+  handleThemeToggle() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     
@@ -118,75 +297,65 @@ export class TodoController {
     this.updateThemeIcon(newTheme);
   }
 
-  setupEventListeners() {
-    // 追加ボタンのイベント
-    this.addTodoButton.addEventListener('click', () => this.handleAddTodo());
-
-    // Enter キーでの追加
-    this.todoInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        this.handleAddTodo();
-      }
-    });
-
-    // カテゴリフィルターのイベント
-    this.categoryFilter.addEventListener('change', () => this.render());
-
-    // テーマと言語切り替えボタンのイベント
-    this.themeToggleButton.addEventListener('click', () => this.toggleTheme());
-    document.getElementById('toggleLang').addEventListener('click', () => this.toggleLanguage());
+  handleLanguageToggle() {
+    const currentLang = this.getCurrentLanguage();
+    const newLang = currentLang === 'en' ? 'ja' : 'en';
+    document.documentElement.setAttribute('lang', newLang);
+    this.updateLanguage(newLang);
   }
 
-  handleAddTodo() {
-    const success = this.todoList.addTodo(
-      this.todoInput.value,
-      this.prioritySelect.value,
-      this.dueDateInput.value || null,
-      this.categorySelect.value
-    );
-    if (success) {
-      this.todoInput.value = '';
-      this.dueDateInput.value = '';
+  handleFilterChange() {
+    this.render();
+  }
+
+  handleKeyPress(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      this.handleAddTodo();
     }
   }
 
-  // 期限の表示フォーマット
-  formatDueDate(dueDate, lang) {
-    if (!dueDate) return '';
-    const date = new Date(dueDate);
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return date.toLocaleDateString(lang === 'ja' ? 'ja-JP' : 'en-US', options);
-  }
-
-  // Todo要素の作成
+  /**
+   * Todo要素の作成
+   * @private
+   * @param {TodoItem} todo
+   * @returns {HTMLElement}
+   */
   createTodoElement(todo) {
     const li = document.createElement('li');
     li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
     li.setAttribute('data-priority', todo.priority);
+    li.setAttribute('data-id', todo.id);
+
+    const currentLang = this.getCurrentLanguage();
+
     // チェックボックス
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = 'todo-checkbox';
     checkbox.checked = todo.completed;
+    checkbox.setAttribute('aria-label', `${todo.text}を${todo.completed ? '未完了' : '完了'}にする`);
     checkbox.addEventListener('change', () => this.todoList.toggleTodo(todo.id));
-
-    const currentLang = document.documentElement.getAttribute('lang') || 'ja';
 
     // テキスト要素
     const todoText = document.createElement('span');
     todoText.className = 'todo-text';
     todoText.textContent = todo.text;
+    todoText.setAttribute('role', 'textbox');
+    todoText.setAttribute('aria-label', todo.text);
 
     // 優先度インジケーター
     const priorityIndicator = document.createElement('span');
     priorityIndicator.className = `priority-indicator priority-${todo.priority}`;
     priorityIndicator.textContent = translations[currentLang].priority[todo.priority];
+    priorityIndicator.setAttribute('role', 'status');
     todoText.appendChild(priorityIndicator);
 
     // カテゴリタグ
     const categoryTag = document.createElement('span');
     categoryTag.className = 'category-tag';
     categoryTag.textContent = translations[currentLang].category[todo.category];
+    categoryTag.setAttribute('role', 'status');
     todoText.appendChild(categoryTag);
 
     // 期限表示
@@ -194,18 +363,23 @@ export class TodoController {
       const dueDateSpan = document.createElement('span');
       dueDateSpan.className = `due-date ${todo.isExpired() ? 'expired' : ''}`;
       dueDateSpan.textContent = `${translations[currentLang].dueDate}${this.formatDueDate(todo.dueDate, currentLang)}`;
+      dueDateSpan.setAttribute('role', 'status');
       todoText.appendChild(dueDateSpan);
     }
 
     // 編集機能
     if (!todo.completed) {
       todoText.addEventListener('click', () => this.setupEditMode(li, todo));
+      todoText.setAttribute('role', 'button');
+      todoText.setAttribute('tabindex', '0');
+      todoText.setAttribute('aria-label', `${todo.text}を編集`);
     }
 
     // 削除ボタン
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
-    deleteBtn.innerHTML = `<i class="fas fa-trash"></i> ${translations[currentLang].deleteButton}`;
+    deleteBtn.innerHTML = `<i class="fas fa-trash" aria-hidden="true"></i> ${translations[currentLang].deleteButton}`;
+    deleteBtn.setAttribute('aria-label', `${todo.text}を削除`);
     deleteBtn.addEventListener('click', () => this.todoList.deleteTodo(todo.id));
 
     // 要素の組み立て
@@ -216,20 +390,31 @@ export class TodoController {
     return li;
   }
 
-  // 編集モードのセットアップ
+  /**
+   * 編集モードのセットアップ
+   * @private
+   * @param {HTMLElement} li
+   * @param {TodoItem} todo
+   */
   setupEditMode(li, todo) {
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'edit-input';
     input.value = todo.text;
+    input.setAttribute('aria-label', `${todo.text}を編集`);
 
     const todoText = li.querySelector('.todo-text');
     li.replaceChild(input, todoText);
     input.focus();
 
     const handleEdit = () => {
-      const success = this.todoList.updateTodoText(todo.id, input.value);
-      if (!success) {
+      try {
+        const success = this.todoList.updateTodo(todo.id, { text: input.value });
+        if (!success) {
+          li.replaceChild(todoText, input);
+        }
+      } catch (error) {
+        this.showError('更新エラー', error.message);
         li.replaceChild(todoText, input);
       }
     };
@@ -237,27 +422,97 @@ export class TodoController {
     input.addEventListener('blur', handleEdit);
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
+        e.preventDefault();
         handleEdit();
       }
     });
   }
 
-  // UIの更新
-  render() {
-    const selectedCategory = this.categoryFilter.value;
+  /**
+   * 期限の表示フォーマット
+   * @private
+   * @param {string|Date} dueDate
+   * @param {string} lang
+   * @returns {string}
+   */
+  formatDueDate(dueDate, lang) {
+    if (!dueDate) return '';
+    const date = new Date(dueDate);
+    const options = { 
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      weekday: 'short'
+    };
+    return date.toLocaleDateString(lang === 'ja' ? 'ja-JP' : 'en-US', options);
+  }
 
+  /**
+   * UIの更新
+   * @private
+   */
+  render() {
+    const selectedCategory = this.elements.categoryFilter.value;
+    const sortField = 'priority'; // デフォルトのソート
+    
     // 未完了リストの更新
-    this.incompleteTodoList.innerHTML = '';
-    this.todoList.getFilteredTodos(false, selectedCategory).forEach(todo => {
-      const element = this.createTodoElement(todo);
-      this.incompleteTodoList.appendChild(element);
+    const incompleteTodos = this.todoList.getFilteredTodos({ 
+      completed: false,
+      category: selectedCategory === 'all' ? null : selectedCategory
     });
+    this.renderTodoList(this.elements.incompleteTodoList, incompleteTodos, sortField);
 
     // 完了リストの更新
-    this.completedTodoList.innerHTML = '';
-    this.todoList.getFilteredTodos(true, selectedCategory).forEach(todo => {
-      const element = this.createTodoElement(todo);
-      this.completedTodoList.appendChild(element);
+    const completedTodos = this.todoList.getFilteredTodos({
+      completed: true,
+      category: selectedCategory === 'all' ? null : selectedCategory
     });
+    this.renderTodoList(this.elements.completedTodoList, completedTodos, sortField);
+
+    // アクセシビリティ通知
+    this.updateAccessibilityStatus(incompleteTodos.length, completedTodos.length);
+  }
+
+  /**
+   * Todoリストの描画
+   * @private
+   * @param {HTMLElement} container
+   * @param {TodoItem[]} todos
+   * @param {string} sortField
+   */
+  renderTodoList(container, todos, sortField) {
+    const sortedTodos = this.todoList.getSortedTodos(sortField);
+    const fragment = document.createDocumentFragment();
+    
+    todos.forEach(todo => {
+      fragment.appendChild(this.createTodoElement(todo));
+    });
+
+    container.innerHTML = '';
+    container.appendChild(fragment);
+  }
+
+  /**
+   * アクセシビリティステータスの更新
+   * @private
+   * @param {number} incompleteCount
+   * @param {number} completedCount
+   */
+  updateAccessibilityStatus(incompleteCount, completedCount) {
+    const status = document.getElementById('accessibilityStatus') || 
+                  (() => {
+                    const el = document.createElement('div');
+                    el.id = 'accessibilityStatus';
+                    el.className = 'visually-hidden';
+                    el.setAttribute('role', 'status');
+                    el.setAttribute('aria-live', 'polite');
+                    document.body.appendChild(el);
+                    return el;
+                  })();
+
+    const currentLang = this.getCurrentLanguage();
+    status.textContent = translations[currentLang].statusMessage
+      .replace('{incomplete}', incompleteCount)
+      .replace('{completed}', completedCount);
   }
 }
