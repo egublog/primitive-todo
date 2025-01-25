@@ -1,0 +1,39 @@
+# Gradle
+.gradle
+build/
+out/
+.idea/
+*.iml
+*.log
+
+# Maven
+target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# Eclipse
+.settings/
+.classpath
+.project
+
+# IntelliJ IDEA
+.idea/
+*.ipr
+*.iws
+*.iml
+
+# Mac
+.DS_Store
+
+# Local configuration
+*.properties
+*.env
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite
