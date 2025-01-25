@@ -1,12 +1,10 @@
 import { TodoItem } from './TodoItem.js';
+import { API } from '../utils/api.js';
 
 /**
  * Todoリストを管理するクラス
  */
 export class TodoList {
-  /** @type {string} */
-  static STORAGE_KEY = 'todos';
-
   /** @type {string[]} */
   static SORT_FIELDS = ['createdAt', 'updatedAt', 'dueDate', 'priority'];
 
@@ -62,46 +60,30 @@ export class TodoList {
   }
 
   /**
-   * LocalStorageからデータを読み込み
+   * APIからデータを読み込み
    * @throws {Error} データの読み込みに失敗した場合
    */
-  load() {
+  async load() {
     try {
-      const stored = localStorage.getItem(TodoList.STORAGE_KEY);
-      if (stored) {
-        const data = JSON.parse(stored);
-        this.todos = data.map(item => {
-          const todo = new TodoItem(
-            item.text,
-            item.priority,
-            item.completed,
-            item.dueDate,
-            item.category
-          );
-          // ID、タイムスタンプを復元
-          todo.id = item.id;
-          todo.createdAt = item.createdAt;
-          todo.updatedAt = item.updatedAt;
-          return todo;
-        });
-        this.notify();
-      }
+      const data = await API.get();
+      this.todos = data.map(item => {
+        const todo = new TodoItem(
+          item.title,
+          item.description,
+          item.priority,
+          item.completed,
+          item.dueDate,
+          item.category
+        );
+        todo.id = item.id;
+        todo.createdAt = item.createdAt;
+        todo.updatedAt = item.updatedAt;
+        return todo;
+      });
+      this.notify();
     } catch (error) {
       this.handleError('load', error);
       throw new Error('データの読み込みに失敗しました');
-    }
-  }
-
-  /**
-   * LocalStorageにデータを保存
-   * @throws {Error} データの保存に失敗した場合
-   */
-  save() {
-    try {
-      localStorage.setItem(TodoList.STORAGE_KEY, JSON.stringify(this.todos));
-    } catch (error) {
-      this.handleError('save', error);
-      throw new Error('データの保存に失敗しました');
     }
   }
 
@@ -111,16 +93,25 @@ export class TodoList {
    * @param {string} priority 優先度
    * @param {string|null} dueDate 期限日
    * @param {string} category カテゴリー
-   * @returns {TodoItem} 作成されたTodoアイテム
+   * @returns {Promise<TodoItem>} 作成されたTodoアイテム
    * @throws {Error} バリデーションエラー
    */
-  addTodo(text, priority, dueDate, category) {
+  async addTodo(title, description, priority, dueDate, category) {
     try {
-      const todo = new TodoItem(text, priority, false, dueDate, category);
-      this.todos.push(todo);
-      this.save();
+      const todo = new TodoItem(title, description, priority, false, dueDate, category);
+      const createdTodo = await API.post('', todo.toJSON());
+      this.todos.push(new TodoItem(
+        createdTodo.text,
+        createdTodo.priority,
+        createdTodo.completed,
+        createdTodo.dueDate,
+        createdTodo.category,
+        createdTodo.id,
+        createdTodo.createdAt,
+        createdTodo.updatedAt
+      ));
       this.notify();
-      return todo;
+      return createdTodo;
     } catch (error) {
       this.handleError('add', error);
       throw error;
@@ -130,72 +121,89 @@ export class TodoList {
   /**
    * Todoを削除
    * @param {string} id TodoのID
-   * @returns {boolean} 削除が成功したかどうか
+   * @returns {Promise<boolean>} 削除が成功したかどうか
    */
-  deleteTodo(id) {
-    const index = this.todos.findIndex(todo => todo.id === id);
-    if (index !== -1) {
-      this.todos.splice(index, 1);
-      this.save();
-      this.notify();
-      return true;
+  async deleteTodo(id) {
+    try {
+      await API.delete(`/${id}`);
+      const index = this.todos.findIndex(todo => todo.id === id);
+      if (index !== -1) {
+        this.todos.splice(index, 1);
+        this.notify();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      this.handleError('delete', error);
+      throw new Error('Todoの削除に失敗しました');
     }
-    return false;
   }
 
   /**
    * 複数のTodoを一括削除
    * @param {string[]} ids 削除するTodoのID配列
-   * @returns {number} 削除された件数
+   * @returns {Promise<number>} 削除された件数
    */
-  deleteTodos(ids) {
-    const initialLength = this.todos.length;
-    this.todos = this.todos.filter(todo => !ids.includes(todo.id));
-    const deletedCount = initialLength - this.todos.length;
-    if (deletedCount > 0) {
-      this.save();
-      this.notify();
+  async deleteTodos(ids) {
+    try {
+      await Promise.all(ids.map(id => API.delete(`/${id}`)));
+      const initialLength = this.todos.length;
+      this.todos = this.todos.filter(todo => !ids.includes(todo.id));
+      const deletedCount = initialLength - this.todos.length;
+      if (deletedCount > 0) {
+        this.notify();
+      }
+      return deletedCount;
+    } catch (error) {
+      this.handleError('delete', error);
+      throw new Error('Todoの一括削除に失敗しました');
     }
-    return deletedCount;
   }
 
   /**
    * Todoの完了状態を切り替え
    * @param {string} id TodoのID
-   * @returns {boolean} 更新が成功したかどうか
+   * @returns {Promise<boolean>} 更新が成功したかどうか
    */
-  toggleTodo(id) {
-    const todo = this.todos.find(todo => todo.id === id);
-    if (todo) {
-      todo.toggleComplete();
-      this.save();
-      this.notify();
-      return true;
+  async toggleTodo(id) {
+    try {
+      const todo = this.todos.find(todo => todo.id === id);
+      if (todo) {
+        const updatedTodo = await API.put(`/${id}`, {
+          completed: !todo.completed
+        });
+        todo.update(updatedTodo);
+        this.notify();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      this.handleError('toggle', error);
+      throw new Error('Todoの状態更新に失敗しました');
     }
-    return false;
   }
 
   /**
    * Todoを更新
    * @param {string} id TodoのID
    * @param {Partial<TodoItem>} updates 更新内容
-   * @returns {boolean} 更新が成功したかどうか
+   * @returns {Promise<boolean>} 更新が成功したかどうか
    * @throws {Error} バリデーションエラー
    */
-  updateTodo(id, updates) {
-    const todo = this.todos.find(todo => todo.id === id);
-    if (todo) {
-      try {
-        todo.update(updates);
-        this.save();
+  async updateTodo(id, updates) {
+    try {
+      const todo = this.todos.find(todo => todo.id === id);
+      if (todo) {
+        const updatedTodo = await API.put(`/${id}`, updates);
+        todo.update(updatedTodo);
         this.notify();
         return true;
-      } catch (error) {
-        this.handleError('update', error);
-        throw error;
       }
+      return false;
+    } catch (error) {
+      this.handleError('update', error);
+      throw error;
     }
-    return false;
   }
 
   /**

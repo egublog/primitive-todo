@@ -30,6 +30,15 @@
         </div>
       </header>
       <main>
+        <!-- ローディングインジケーター -->
+        <div id="loadingIndicator" class="loading-indicator" aria-live="polite" aria-hidden="true">
+          <div class="spinner"></div>
+          <span>読み込み中...</span>
+        </div>
+
+        <!-- エラーメッセージ表示用コンテナ -->
+        <div id="errorContainer" class="error-container" aria-live="assertive"></div>
+
         <form class="todo-input" role="form" aria-label="タスク入力フォーム">
           <div class="input-group">
             <label for="todoInput" class="visually-hidden">タスク名</label>

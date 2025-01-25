@@ -39,6 +39,9 @@ public class TodoService {
         todoRepository.deleteById(id);
     }
 
+    private static final List<String> VALID_PRIORITIES = List.of("low", "medium", "high");
+    private static final List<String> VALID_CATEGORIES = List.of("none", "work", "personal", "shopping", "study");
+
     private void validateTodo(Todo todo) {
         if (todo.getTitle() == null || todo.getTitle().trim().isEmpty()) {
             throw new IllegalArgumentException("Todo title cannot be empty");
@@ -50,6 +53,14 @@ public class TodoService {
         
         if (todo.getDescription() != null && todo.getDescription().length() > 500) {
             throw new IllegalArgumentException("Todo description cannot exceed 500 characters");
+        }
+
+        if (todo.getPriority() == null || !VALID_PRIORITIES.contains(todo.getPriority())) {
+            throw new IllegalArgumentException("Invalid priority value. Must be one of: " + String.join(", ", VALID_PRIORITIES));
+        }
+
+        if (todo.getCategory() == null || !VALID_CATEGORIES.contains(todo.getCategory())) {
+            throw new IllegalArgumentException("Invalid category value. Must be one of: " + String.join(", ", VALID_CATEGORIES));
         }
     }
 }

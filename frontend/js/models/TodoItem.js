@@ -9,20 +9,22 @@ export class TodoItem {
   static VALID_CATEGORIES = ['none', 'work', 'personal', 'shopping', 'study'];
 
   /**
-   * @param {string} text - Todoのテキスト
+   * @param {string} title - Todoのタイトル
+   * @param {string} [description=''] - Todoの説明
    * @param {string} [priority='medium'] - 優先度
    * @param {boolean} [completed=false] - 完了状態
    * @param {string|null} [dueDate=null] - 期限日（YYYY-MM-DD形式）
    * @param {string} [category='none'] - カテゴリー
    * @throws {Error} 無効なパラメータが渡された場合
    */
-  constructor(text, priority = 'medium', completed = false, dueDate = null, category = 'none') {
-    this.validateText(text);
+  constructor(title, description = '', priority = 'medium', completed = false, dueDate = null, category = 'none') {
+    this.validateTitle(title);
     this.validatePriority(priority);
     this.validateCategory(category);
     if (dueDate) this.validateDueDate(dueDate);
 
-    this.text = text.trim();
+    this.title = title.trim();
+    this.description = description.trim();
     this.priority = priority;
     this.completed = Boolean(completed);
     this.dueDate = dueDate;
@@ -42,20 +44,20 @@ export class TodoItem {
   }
 
   /**
-   * テキストのバリデーション
+   * タイトルのバリデーション
    * @private
-   * @param {string} text
+   * @param {string} title
    * @throws {Error}
    */
-  validateText(text) {
-    if (!text || typeof text !== 'string') {
-      throw new Error('テキストは必須です');
+  validateTitle(title) {
+    if (!title || typeof title !== 'string') {
+      throw new Error('タイトルは必須です');
     }
-    if (text.trim().length === 0) {
-      throw new Error('テキストが空です');
+    if (title.trim().length === 0) {
+      throw new Error('タイトルが空です');
     }
-    if (text.length > 200) {
-      throw new Error('テキストは200文字以内で入力してください');
+    if (title.length > 200) {
+      throw new Error('タイトルは200文字以内で入力してください');
     }
   }
 
@@ -127,9 +129,12 @@ export class TodoItem {
    * @throws {Error} バリデーションエラー
    */
   update(updates) {
-    if (updates.text !== undefined) {
-      this.validateText(updates.text);
-      this.text = updates.text.trim();
+    if (updates.title !== undefined) {
+      this.validateTitle(updates.title);
+      this.title = updates.title.trim();
+    }
+    if (updates.description !== undefined) {
+      this.description = updates.description.trim();
     }
     if (updates.priority !== undefined) {
       this.validatePriority(updates.priority);
@@ -164,11 +169,12 @@ export class TodoItem {
   toJSON() {
     return {
       id: this.id,
-      text: this.text,
+      title: this.title,
+      description: this.description,
       priority: this.priority,
-      completed: this.completed,
-      dueDate: this.dueDate,
       category: this.category,
+      dueDate: this.dueDate,
+      completed: this.completed,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };
