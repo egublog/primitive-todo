@@ -23,26 +23,30 @@
 
 ## 技術スタック
 
-- **フロントエンド**
-  - HTML5
-  - CSS3（モジュラーCSS）
-  - JavaScript（ES6+）
-  - Flatpickr（日付選択）
-  - Font Awesome（アイコン）
+### フロントエンド
+- HTML5
+- CSS3（モジュラーCSS）
+- JavaScript（ES6+）
+- Flatpickr（日付選択）
+- Font Awesome（アイコン）
 
-- **アーキテクチャ**
-  - MVCパターン
-  - モジュラー設計
-  - イベント駆動型アーキテクチャ
+### バックエンド
+- Java (Spring Boot)
+- SQLite
+- Flyway（データベースマイグレーション）
+- RESTful API
 
-- **データ管理**
-  - LocalStorage
-  - カスタムイベントシステム
+### アーキテクチャ
+- クライアント-サーバーアーキテクチャ
+- RESTful APIによる通信
+- モジュラー設計
+- イベント駆動型アーキテクチャ
 
 ## プロジェクト構造
 
+### フロントエンド
 ```
-src/
+frontend/
 ├── js/
 │   ├── app.js                 # アプリケーションのエントリーポイント
 │   ├── controllers/           # コントローラー
@@ -66,75 +70,81 @@ src/
 └── index.html                # メインHTML
 ```
 
-## 機能詳細
+### バックエンド
+```
+backend/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── example/
+│   │   │           ├── Application.java       # アプリケーションのエントリーポイント
+│   │   │           ├── config/               # 設定関連
+│   │   │           │   └── WebConfig.java    # Web設定
+│   │   │           ├── controllers/          # コントローラー
+│   │   │           │   └── TodoController.java
+│   │   │           ├── exceptions/           # 例外処理
+│   │   │           │   └── GlobalExceptionHandler.java
+│   │   │           ├── models/               # データモデル
+│   │   │           │   └── Todo.java
+│   │   │           ├── repositories/         # リポジトリ
+│   │   │           │   └── TodoRepository.java
+│   │   │           └── services/             # サービス層
+│   │   │               └── TodoService.java
+│   │   └── resources/
+│   │       ├── application.properties        # アプリケーション設定
+│   │       └── db/
+│   │           └── migrations/              # データベースマイグレーション
+│   │               └── V1__create_todo_table.sql
+└── build.gradle                              # ビルド設定
+```
 
-### タスク管理
-- テキスト入力による新規タスク作成
-- クリックによるタスク編集
-- チェックボックスによる完了状態の切り替え
+## APIエンドポイント
 
-### フィルタリング
-- カテゴリーによるフィルタリング
-- 完了状態によるフィルタリング
-
-### データ永続化
-- LocalStorageを使用したデータ保存
-- オフライン対応
-- 自動保存機能
-
-### UI/UX
-- レスポンシブデザイン
-- ダークモード対応
-- アニメーション効果
-- キーボードショートカット
-
-### アクセシビリティ
-- WAI-ARIA対応
-- キーボード操作対応
-- スクリーンリーダー対応
-- 高コントラストモード
-
-### 国際化
-- 日本語/英語対応
-- 日付フォーマットのローカライズ
-- 方向性（RTL/LTR）対応
-
-## パフォーマンス最適化
-
-- レイジーローディング
-- アセットのプリフェッチ
-- 効率的なDOMアップデート
-- デバウンス処理の実装
-
-## ブラウザ対応
-
-- Google Chrome（最新版）
-- Firefox（最新版）
-- Safari（最新版）
-- Edge（最新版）
+| メソッド | エンドポイント       | 説明                     |
+|----------|----------------------|--------------------------|
+| GET      | /api/todos           | Todo一覧取得             |
+| POST     | /api/todos           | 新規Todo作成             |
+| GET      | /api/todos/{id}      | 特定のTodo取得           |
+| PUT      | /api/todos/{id}      | Todo更新                 |
+| DELETE   | /api/todos/{id}      | Todo削除                 |
 
 ## 開発者向け情報
 
 ### 開発環境のセットアップ
 
-1. リポジトリをダウンロードまたはクローン
-2. `src/index.html` をブラウザで開く
+1. リポジトリをクローン
+```bash
+git clone https://github.com/example/primitive-todo.git
+cd primitive-todo
+```
 
-プロジェクトは外部依存関係を持たない純粋なHTML/CSS/JavaScriptで構築されています。特別なビルドツールやパッケージマネージャは必要ありません。
+2. バックエンドのビルドと実行
+```bash
+cd backend
+./gradlew bootRun
+```
+
+3. フロントエンドの実行
+```bash
+cd ../frontend
+open index.html
+```
 
 ### コーディング規約
 
-- JSDocによるドキュメンテーション
+- JSDoc/JavaDocによるドキュメンテーション
 - コンポーネント単位のスタイル定義
 - 意味のある変数/関数名の使用
+- RESTful API設計原則の遵守
 
-### デバッグモード
+### テストの実行
 
-開発時は`app.js`の`APP_CONFIG.debug`を`true`に設定することで、以下の機能が有効になります：
-
-- パフォーマンスモニタリング
-- 詳細なログ出力
-- デバッグツールの有効化
+バックエンドのテストを実行するには：
+```bash
+cd backend
+./gradlew test
+```
 
 ## ライセンス
 
