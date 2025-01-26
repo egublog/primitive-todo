@@ -27,8 +27,6 @@
 - HTML5
 - CSS3（モジュラーCSS）
 - JavaScript（ES6+）
-- Flatpickr（日付選択）
-- Font Awesome（アイコン）
 
 ### バックエンド
 - Java (Spring Boot)
@@ -122,7 +120,7 @@ cd primitive-todo
 2. バックエンドのビルドと実行
 ```bash
 cd backend
-./gradlew bootRun
+gradle bootRun
 ```
 
 3. フロントエンドの実行
@@ -143,7 +141,7 @@ open index.html
 バックエンドのテストを実行するには：
 ```bash
 cd backend
-./gradlew test
+gradle test
 ```
 
 ## ライセンス
