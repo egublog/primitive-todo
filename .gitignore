@@ -33,3 +33,6 @@ yarn-error.log*
 # System Files
 .DS_Store
 Thumbs.db
+
+# VS Code settings
+.vscode/
