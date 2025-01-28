@@ -32,7 +32,7 @@ public class Todo {
     @Column(nullable = false)
     private String category = "none";
 
-    @Column
+    @Column(name = "due_date")
     private LocalDateTime dueDate;
 
     @Column(nullable = false)
