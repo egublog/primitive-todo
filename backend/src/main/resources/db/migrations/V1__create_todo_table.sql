@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS todos (
 
 CREATE TRIGGER IF NOT EXISTS update_todo_timestamp
 AFTER UPDATE ON todos
-FOR EACH ROW
 BEGIN
-    UPDATE todos SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
+    UPDATE todos SET updated_at = DATETIME('now') WHERE id = NEW.id;
 END;

@@ -9,7 +9,12 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "todos")
+@Table(
+    name = "todos",
+    indexes = {
+        @Index(name = "idx_todo_due_date", columnList = "dueDate")
+    }
+)
 public class Todo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,10 +40,12 @@ public class Todo {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
 
     public Todo() {}
