@@ -91,10 +91,17 @@ export class TodoController {
 
     try {
       this.setLoading(true);
-      await updateTodo(id, { completed: true });
-      // 全件再取得して画面を更新
+      // 現在のTodoリストを取得して、対象のTodoの状態を確認
       const todos = await fetchTodos();
-      this.view.render(todos);
+      const todo = todos.find(t => t.id === id);
+      if (!todo) {
+        throw new Error('Todo not found');
+      }
+      // 現在の完了状態を反転
+      await updateTodo(id, { completed: !todo.completed });
+      // 全件再取得して画面を更新
+      const updatedTodos = await fetchTodos();
+      this.view.render(updatedTodos);
     } catch (error) {
       this.view.showError('Todoの更新に失敗しました');
     } finally {

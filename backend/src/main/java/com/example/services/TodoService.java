@@ -30,9 +30,32 @@ public class TodoService {
         return todoRepository.save(todo);
     }
 
-    public Todo updateTodo(Todo todo) {
-        validateTodo(todo);
-        return todoRepository.save(todo);
+    public Todo updateTodo(Todo updates) {
+        Todo existingTodo = todoRepository.findById(updates.getId())
+            .orElseThrow(() -> new IllegalArgumentException("Todo not found with id: " + updates.getId()));
+
+        // 更新されたフィールドのみを反映
+        if (updates.getTitle() != null) {
+            existingTodo.setTitle(updates.getTitle());
+        }
+        if (updates.getDescription() != null) {
+            existingTodo.setDescription(updates.getDescription());
+        }
+        if (updates.getPriority() != null) {
+            existingTodo.setPriority(updates.getPriority());
+        }
+        if (updates.getCategory() != null) {
+            existingTodo.setCategory(updates.getCategory());
+        }
+        if (updates.getDueDate() != null) {
+            existingTodo.setDueDate(updates.getDueDate());
+        }
+        // completedフィールドは特別扱い(nullでも更新可能)
+        existingTodo.setCompleted(updates.isCompleted());
+
+        // 更新後のTodoを検証
+        validateTodo(existingTodo);
+        return todoRepository.save(existingTodo);
     }
 
     public void deleteTodo(Long id) {
