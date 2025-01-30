@@ -51,7 +51,7 @@ async function initializeApp() {
       throw new Error('お使いのブラウザはサポートされていません。');
     }
 
-    // ServiceWorkerの登録（オフライン対応）
+    // ServiceWorkerの登録(オフライン対応)
     if ('serviceWorker' in navigator) {
       try {
         await navigator.serviceWorker.register('/sw.js');
@@ -90,23 +90,160 @@ async function initializeApp() {
       });
     }
 
-    // テーマの初期化
+    // テーマと言語の初期化
     initializeTheme();
+    initializeLanguage();
+
+    // flatpickrの初期化
+    initializeFlatpickr();
 
     // コントローラーの初期化
     const controller = new TodoController();
     window.todoApp = APP_CONFIG.debug ? controller : undefined;
 
-    // テーマ切り替えボタンのイベントリスナー設定
+    // テーマと言語切り替えボタンのイベントリスナー設定
     const themeToggleBtn = document.getElementById('toggleTheme');
+    const langToggleBtn = document.getElementById('toggleLang');
+    
     if (themeToggleBtn) {
       themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+    
+    if (langToggleBtn) {
+      langToggleBtn.addEventListener('click', toggleLanguage);
     }
 
     measurePerformance('App initialization complete');
   } catch (error) {
     handleGlobalError(error);
   }
+}
+
+/**
+ * 言語の初期化
+ */
+function initializeLanguage() {
+  const savedLang = localStorage.getItem(`${APP_CONFIG.storagePrefix}lang`) || 'ja';
+  document.documentElement.setAttribute('data-lang', savedLang);
+  updateLanguageText(savedLang);
+}
+
+/**
+ * 言語の切り替え
+ */
+function toggleLanguage() {
+  const currentLang = document.documentElement.getAttribute('data-lang');
+  const newLang = currentLang === 'en' ? 'ja' : 'en';
+  
+  document.documentElement.setAttribute('data-lang', newLang);
+  localStorage.setItem(`${APP_CONFIG.storagePrefix}lang`, newLang);
+  updateLanguageText(newLang);
+  
+  // ページ上のテキストを更新
+  updatePageText(newLang);
+  
+  // flatpickrの言語を更新
+  const datePicker = document.getElementById('dueDateInput')._flatpickr;
+  if (datePicker) {
+    const { translations } = window;
+    if (translations && translations[newLang]) {
+      datePicker.set('locale', newLang === 'ja' ? 'ja' : 'en');
+      datePicker.set('dateFormat', newLang === 'ja' ? 'Y年m月d日' : 'Y-m-d');
+      datePicker.config.placeholder = translations[newLang].datePlaceholder;
+      datePicker.input.placeholder = translations[newLang].datePlaceholder;
+    }
+  }
+}
+
+/**
+ * 言語切り替えボタンのテキスト更新
+ * @param {string} lang - 現在の言語 ('ja' または 'en')
+ */
+function updateLanguageText(lang) {
+  const langButton = document.getElementById('toggleLang');
+  if (langButton) {
+    const span = langButton.querySelector('span');
+    if (span) {
+      span.textContent = lang === 'en' ? '日本語' : 'English';
+    }
+  }
+}
+
+/**
+ * ページ上のテキストを更新
+ * @param {string} lang - 現在の言語 ('ja' または 'en')
+ */
+function updatePageText(lang) {
+  const { translations } = window;
+  if (!translations || !translations[lang]) return;
+
+  // data-i18n属性を持つ要素の翻訳
+  const elements = document.querySelectorAll('[data-i18n]');
+  elements.forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    const keys = key.split('.');
+    let value = translations[lang];
+    
+    for (const k of keys) {
+      if (value && value[k]) {
+        value = value[k];
+      } else {
+        value = key;
+        break;
+      }
+    }
+    
+    if (typeof value === 'string') {
+      element.textContent = value;
+    }
+  });
+
+  // data-ja/data-en属性を持つ要素の翻訳
+  const selectElements = document.querySelectorAll('select');
+  selectElements.forEach(select => {
+    const options = select.querySelectorAll('option');
+    options.forEach(option => {
+      const translatedText = option.getAttribute(`data-${lang}`);
+      if (translatedText) {
+        option.textContent = translatedText;
+      }
+    });
+  });
+
+  // プレースホルダーの翻訳
+  const inputs = document.querySelectorAll('input[placeholder]');
+  inputs.forEach(input => {
+    const key = input.getAttribute('data-i18n');
+    if (key && translations[lang][key]) {
+      input.placeholder = translations[lang][key];
+    }
+  });
+
+  // aria-labelの翻訳
+  const ariaElements = document.querySelectorAll('[aria-label]');
+  ariaElements.forEach(element => {
+    const key = element.getAttribute('data-i18n-aria');
+    if (key && translations[lang][key]) {
+      element.setAttribute('aria-label', translations[lang][key]);
+    }
+  });
+}
+
+/**
+ * flatpickrの初期化
+ */
+function initializeFlatpickr() {
+  const lang = document.documentElement.getAttribute('data-lang') || 'ja';
+  const { translations } = window;
+  if (!translations || !translations[lang]) return;
+
+  flatpickr('#dueDateInput', {
+    locale: lang === 'ja' ? 'ja' : 'en',
+    dateFormat: lang === 'ja' ? 'Y年m月d日' : 'Y-m-d',
+    disableMobile: true,
+    placeholder: translations[lang].datePlaceholder,
+    allowInput: true
+  });
 }
 
 /**

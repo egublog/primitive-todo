@@ -1,7 +1,7 @@
 /**
  * アプリケーションの翻訳データ
  */
-export const translations = {
+const translations = {
   ja: {
     // 基本UI要素
     title: 'プリミティブTodo',
@@ -16,7 +16,7 @@ export const translations = {
 
     // 日付関連
     noDueDate: '期限なし',
-    dueDate: '期限：',
+    dueDate: '期限:',
     expired: '期限切れ',
     today: '今日',
     tomorrow: '明日',
@@ -26,7 +26,7 @@ export const translations = {
       expired: '期限切れ',
       today: '今日まで',
       tomorrow: '明日まで',
-      future: 'あと{days}日',
+      future: 'あと{days}日'
     },
 
     // 優先度
@@ -34,7 +34,7 @@ export const translations = {
       high: '高',
       medium: '中',
       low: '低',
-      label: '優先度：'
+      label: '優先度:'
     },
 
     // カテゴリ
@@ -45,7 +45,7 @@ export const translations = {
       personal: '個人',
       shopping: '買い物',
       study: '学習',
-      label: 'カテゴリー：'
+      label: 'カテゴリー:'
     },
 
     // フィルターとソート
@@ -97,7 +97,7 @@ export const translations = {
       saveFailed: 'データの保存に失敗しました',
       invalidInput: '入力内容が無効です',
       emptyText: 'テキストを入力してください',
-      tooLong: 'テキストが長すぎます（最大200文字）',
+      tooLong: 'テキストが長すぎます(最大200文字)',
       invalidDate: '無効な日付です',
       networkError: 'ネットワークエラーが発生しました'
     },
@@ -235,3 +235,8 @@ export const translations = {
     }
   }
 };
+
+// グローバルに翻訳データを公開
+window.translations = translations;
+
+export { translations };

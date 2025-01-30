@@ -95,9 +95,9 @@ export class TodoView {
     const metaContainer = document.createElement('div');
     metaContainer.className = 'todo-meta';
     metaContainer.innerHTML = `
-      <span class="priority">優先度: ${todo.priority}</span>
-      <span class="category">カテゴリ: ${todo.category}</span>
-      ${todo.dueDate ? `<span class="due-date">期限: ${new Date(todo.dueDate).toLocaleDateString()}</span>` : ''}
+      <span class="priority"><span data-i18n="priority.label"></span>${this.translateValue('priority', todo.priority)}</span>
+      <span class="category"><span data-i18n="category.label"></span>${this.translateValue('category', todo.category)}</span>
+      ${todo.dueDate ? `<span class="due-date"><span data-i18n="dueDate"></span>${this.formatDueDate(todo.dueDate)}</span>` : ''}
     `;
 
     li.appendChild(checkbox);
@@ -106,6 +106,45 @@ export class TodoView {
     li.appendChild(deleteButton);
 
     return li;
+  }
+
+  /**
+   * 値の翻訳
+   * @param {string} type - 翻訳タイプ ('priority' または 'category')
+   * @param {string} value - 翻訳する値
+   * @returns {string} 翻訳された値
+   */
+  translateValue(type, value) {
+    const lang = document.documentElement.getAttribute('data-lang') || 'ja';
+    const { translations } = window;
+    
+    if (!translations || !translations[lang]) return value;
+
+    if (type === 'priority') {
+      return translations[lang].priority[value.toLowerCase()] || value;
+    } else if (type === 'category') {
+      return translations[lang].category[value] || value;
+    }
+    
+    return value;
+  }
+
+  /**
+   * 期限日のフォーマット
+   * @param {string} dueDate - ISO形式の日付文字列
+   * @returns {string} フォーマットされた日付文字列
+   */
+  formatDueDate(dueDate) {
+    const date = new Date(dueDate);
+    const lang = document.documentElement.getAttribute('data-lang') || 'ja';
+    
+    const options = {
+      year: 'numeric',
+      month: lang === 'ja' ? 'long' : 'short',
+      day: 'numeric'
+    };
+    
+    return date.toLocaleDateString(lang === 'ja' ? 'ja-JP' : 'en-US', options);
   }
 
   /**
