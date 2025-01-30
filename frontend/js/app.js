@@ -90,13 +90,54 @@ async function initializeApp() {
       });
     }
 
+    // テーマの初期化
+    initializeTheme();
+
     // コントローラーの初期化
     const controller = new TodoController();
     window.todoApp = APP_CONFIG.debug ? controller : undefined;
 
+    // テーマ切り替えボタンのイベントリスナー設定
+    const themeToggleBtn = document.getElementById('toggleTheme');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+
     measurePerformance('App initialization complete');
   } catch (error) {
     handleGlobalError(error);
+  }
+}
+
+/**
+ * テーマの初期化
+ */
+function initializeTheme() {
+  const savedTheme = localStorage.getItem(`${APP_CONFIG.storagePrefix}theme`) || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeIcon(savedTheme);
+}
+
+/**
+ * テーマの切り替え
+ */
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem(`${APP_CONFIG.storagePrefix}theme`, newTheme);
+  updateThemeIcon(newTheme);
+}
+
+/**
+ * テーマアイコンの更新
+ * @param {string} theme - 現在のテーマ ('light' または 'dark')
+ */
+function updateThemeIcon(theme) {
+  const themeIcon = document.querySelector('#toggleTheme i');
+  if (themeIcon) {
+    themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
   }
 }
 
