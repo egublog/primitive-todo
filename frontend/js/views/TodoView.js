@@ -1,32 +1,17 @@
-import { fetchTodos } from '../utils/api.js';
-
 export class TodoView {
   constructor(controller) {
     this.controller = controller;
     this.initializeElements();
     this.setupEventListeners();
     this.isLoading = false;
-    this.init();
-  }
-
-  async init() {
-    try {
-      this.setLoading(true);
-      const todos = await fetchTodos();
-      this.render(todos);
-    } catch (error) {
-      this.showError('Todoリストの取得に失敗しました');
-      console.error('Todoリスト取得エラー:', error);
-    } finally {
-      this.setLoading(false);
-    }
   }
 
   initializeElements() {
     this.elements = {
       todoInput: document.getElementById('todoInput'),
       addButton: document.getElementById('addTodo'),
-      todoList: document.getElementById('todoList'),
+      incompleteTodoList: document.getElementById('incompleteTodoList'),
+      completedTodoList: document.getElementById('completedTodoList'),
       loadingIndicator: document.getElementById('loadingIndicator'),
       errorContainer: document.getElementById('errorContainer')
     };
@@ -58,11 +43,16 @@ export class TodoView {
    * @param {Array} todos 
    */
   render(todos) {
-    this.elements.todoList.innerHTML = '';
+    this.elements.incompleteTodoList.innerHTML = '';
+    this.elements.completedTodoList.innerHTML = '';
     
     todos.forEach(todo => {
       const todoItem = this.createTodoElement(todo);
-      this.elements.todoList.appendChild(todoItem);
+      if (todo.completed) {
+        this.elements.completedTodoList.appendChild(todoItem);
+      } else {
+        this.elements.incompleteTodoList.appendChild(todoItem);
+      }
     });
   }
 
@@ -89,7 +79,7 @@ export class TodoView {
     // テキスト
     const textSpan = document.createElement('span');
     textSpan.className = 'todo-text';
-    textSpan.textContent = todo.text;
+    textSpan.textContent = todo.title;
 
     // 削除ボタン
     const deleteButton = document.createElement('button');

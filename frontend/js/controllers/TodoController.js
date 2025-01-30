@@ -44,14 +44,17 @@ export class TodoController {
 
     try {
       this.setLoading(true);
-      const newTodo = await addTodo({
-        text,
+      await addTodo({
+        title: text,
+        description: text,
         priority,
         dueDate,
         category,
         completed: false
       });
-      this.view.render([newTodo]);
+      // 全件再取得して画面を更新
+      const todos = await fetchTodos();
+      this.view.render(todos);
     } catch (error) {
       this.view.showError('Todoの追加に失敗しました');
     } finally {
@@ -69,6 +72,9 @@ export class TodoController {
     try {
       this.setLoading(true);
       await deleteTodo(id);
+      // 全件再取得して画面を更新
+      const todos = await fetchTodos();
+      this.view.render(todos);
     } catch (error) {
       this.view.showError('Todoの削除に失敗しました');
     } finally {
@@ -86,6 +92,9 @@ export class TodoController {
     try {
       this.setLoading(true);
       await updateTodo(id, { completed: true });
+      // 全件再取得して画面を更新
+      const todos = await fetchTodos();
+      this.view.render(todos);
     } catch (error) {
       this.view.showError('Todoの更新に失敗しました');
     } finally {
@@ -104,6 +113,9 @@ export class TodoController {
     try {
       this.setLoading(true);
       await updateTodo(id, updates);
+      // 全件再取得して画面を更新
+      const todos = await fetchTodos();
+      this.view.render(todos);
     } catch (error) {
       this.view.showError('Todoの更新に失敗しました');
     } finally {
