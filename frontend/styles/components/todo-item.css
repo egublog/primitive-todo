@@ -20,7 +20,7 @@
 .todo-item {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.8rem;
   padding: var(--todo-padding);
   background-color: var(--item-bg);
   border-radius: var(--todo-border-radius);
@@ -70,11 +70,18 @@
   width: 100%;
 }
 
+.todo-first-row .delete-btn {
+  margin-left: auto;
+}
+
 /* 2段目のスタイル */
 .todo-second-row {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 1rem;
   width: 100%;
+  padding-left: calc(var(--checkbox-size) + var(--todo-gap));
 }
 
 /* チェックボックス */
@@ -132,7 +139,7 @@
 /* メタデータコンテナ */
 .metadata-container {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   align-items: center;
   flex-wrap: nowrap;
 }

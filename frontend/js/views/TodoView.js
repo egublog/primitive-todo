@@ -65,10 +65,16 @@ export class TodoView {
     const li = document.createElement('li');
     li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
     li.setAttribute('data-id', todo.id);
+    li.setAttribute('data-priority', todo.priority.toLowerCase());
+
+    // 1段目
+    const firstRow = document.createElement('div');
+    firstRow.className = 'todo-first-row';
 
     // チェックボックス
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
+    checkbox.className = 'todo-checkbox';
     checkbox.checked = todo.completed;
     checkbox.addEventListener('change', () => {
       if (!this.isLoading) {
@@ -84,26 +90,58 @@ export class TodoView {
     // 削除ボタン
     const deleteButton = document.createElement('button');
     deleteButton.className = 'delete-btn';
-    deleteButton.textContent = '×';
+    deleteButton.textContent = '削除';
     deleteButton.addEventListener('click', () => {
       if (!this.isLoading) {
         this.controller.deleteTodo(todo.id);
       }
     });
 
-    // メタ情報
-    const metaContainer = document.createElement('div');
-    metaContainer.className = 'todo-meta';
-    metaContainer.innerHTML = `
-      <span class="priority"><span data-i18n="priority.label"></span>${this.translateValue('priority', todo.priority)}</span>
-      <span class="category"><span data-i18n="category.label"></span>${this.translateValue('category', todo.category)}</span>
-      ${todo.dueDate ? `<span class="due-date"><span data-i18n="dueDate"></span>${this.formatDueDate(todo.dueDate)}</span>` : ''}
-    `;
+    firstRow.appendChild(checkbox);
+    firstRow.appendChild(textSpan);
+    firstRow.appendChild(deleteButton);
 
-    li.appendChild(checkbox);
-    li.appendChild(textSpan);
-    li.appendChild(metaContainer);
-    li.appendChild(deleteButton);
+    // 2段目
+    const secondRow = document.createElement('div');
+    secondRow.className = 'todo-second-row';
+
+    // メタデータコンテナ
+    const metaContainer = document.createElement('div');
+    metaContainer.className = 'metadata-container';
+
+    // 優先度
+    const prioritySpan = document.createElement('span');
+    prioritySpan.className = `priority-indicator priority-${todo.priority.toLowerCase()}`;
+    prioritySpan.textContent = this.translateValue('priority', todo.priority);
+    metaContainer.appendChild(prioritySpan);
+
+    // カテゴリー
+    if (todo.category && todo.category !== 'なし') {
+      const categorySpan = document.createElement('span');
+      categorySpan.className = 'category-tag';
+      categorySpan.textContent = this.translateValue('category', todo.category);
+      metaContainer.appendChild(categorySpan);
+    }
+
+    // 期限
+    const dueDateSpan = document.createElement('span');
+    dueDateSpan.className = 'due-date';
+    if (todo.dueDate) {
+      const dueDate = new Date(todo.dueDate);
+      const now = new Date();
+      if (dueDate < now) {
+        dueDateSpan.classList.add('expired');
+      }
+      dueDateSpan.textContent = this.formatDueDate(todo.dueDate);
+    } else {
+      dueDateSpan.textContent = '期限なし';
+    }
+    metaContainer.appendChild(dueDateSpan);
+
+    secondRow.appendChild(metaContainer);
+
+    li.appendChild(firstRow);
+    li.appendChild(secondRow);
 
     return li;
   }
