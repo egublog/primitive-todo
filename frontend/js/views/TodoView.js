@@ -43,17 +43,114 @@ export class TodoView {
    * @param {Array} todos 
    */
   render(todos) {
-    this.elements.incompleteTodoList.innerHTML = '';
-    this.elements.completedTodoList.innerHTML = '';
-    
-    todos.forEach(todo => {
-      const todoItem = this.createTodoElement(todo);
-      if (todo.completed) {
-        this.elements.completedTodoList.appendChild(todoItem);
-      } else {
-        this.elements.incompleteTodoList.appendChild(todoItem);
+    // スクロール位置を保存
+    const scrollPosition = window.scrollY;
+
+    const updateTodoElement = (todo, existingItem) => {
+      if (!existingItem) {
+        const newItem = this.createTodoElement(todo);
+        const container = todo.completed ? 
+          this.elements.completedTodoList : 
+          this.elements.incompleteTodoList;
+        container.insertBefore(newItem, container.firstChild);
+        return;
       }
+
+      // 完了状態が変更された場合
+      const isCurrentlyCompleted = existingItem.parentElement === this.elements.completedTodoList;
+      if (isCurrentlyCompleted !== todo.completed) {
+        const targetContainer = todo.completed ? 
+          this.elements.completedTodoList : 
+          this.elements.incompleteTodoList;
+        
+        existingItem.style.animation = 'slideOut var(--slide-duration) cubic-bezier(0.4, 0, 0.2, 1)';
+        existingItem.addEventListener('animationend', () => {
+          const newItem = this.createTodoElement(todo);
+          targetContainer.insertBefore(newItem, targetContainer.firstChild);
+          existingItem.remove();
+        }, { once: true });
+        return;
+      }
+
+      // その他の更新が必要な場合
+      if (this.shouldUpdateItem(existingItem, todo)) {
+        this.updateExistingItem(existingItem, todo);
+      }
+    };
+
+    // 既存のアイテムをMapに格納
+    const existingItems = new Map();
+    this.elements.incompleteTodoList.querySelectorAll('.todo-item').forEach(item => {
+      existingItems.set(item.getAttribute('data-id'), item);
     });
+    this.elements.completedTodoList.querySelectorAll('.todo-item').forEach(item => {
+      existingItems.set(item.getAttribute('data-id'), item);
+    });
+
+    // 各Todoを更新
+    todos.forEach(todo => {
+      const existingItem = existingItems.get(todo.id.toString());
+      updateTodoElement(todo, existingItem);
+      existingItems.delete(todo.id.toString());
+    });
+
+    // 不要になったアイテムを削除
+    existingItems.forEach(item => {
+      item.style.animation = 'slideOut var(--slide-duration) cubic-bezier(0.4, 0, 0.2, 1)';
+      item.addEventListener('animationend', () => {
+        item.remove();
+      }, { once: true });
+    });
+
+    // スクロール位置を復元
+    window.scrollTo(0, scrollPosition);
+  }
+
+  /**
+   * 既存のTodoアイテムを更新
+   * @param {HTMLElement} element 
+   * @param {Object} todo 
+   */
+  updateExistingItem(element, todo) {
+    // テキストの更新
+    const textSpan = element.querySelector('.todo-text');
+    if (textSpan.textContent !== todo.title) {
+      textSpan.textContent = todo.title;
+    }
+
+    // 優先度の更新
+    const currentPriority = element.getAttribute('data-priority');
+    const newPriority = todo.priority.toLowerCase();
+    if (currentPriority !== newPriority) {
+      element.setAttribute('data-priority', newPriority);
+      const prioritySpan = element.querySelector('.priority-indicator');
+      prioritySpan.className = `priority-indicator priority-${newPriority}`;
+      const lang = document.documentElement.getAttribute('data-lang') || 'ja';
+      prioritySpan.textContent = window.translations[lang].priority[newPriority];
+    }
+
+    // 完了状態の更新
+    const checkbox = element.querySelector('.todo-checkbox');
+    if (checkbox.checked !== todo.completed) {
+      checkbox.checked = todo.completed;
+      element.classList.toggle('completed', todo.completed);
+    }
+  }
+
+  /**
+   * Todoアイテムの更新が必要か判定
+   * @param {HTMLElement} element 
+   * @param {Object} todo 
+   * @returns {boolean}
+   */
+  shouldUpdateItem(element, todo) {
+    const currentTitle = element.querySelector('.todo-text').textContent;
+    const currentCompleted = element.classList.contains('completed');
+    const currentPriority = element.getAttribute('data-priority');
+    
+    return currentTitle !== todo.title ||
+           currentCompleted !== todo.completed ||
+           currentPriority !== todo.priority.toLowerCase();
   }
 
   /**
