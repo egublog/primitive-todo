@@ -126,6 +126,7 @@ function initializeLanguage() {
   const savedLang = localStorage.getItem(`${APP_CONFIG.storagePrefix}lang`) || 'ja';
   document.documentElement.setAttribute('data-lang', savedLang);
   updateLanguageText(savedLang);
+  updatePageText(savedLang);
 }
 
 /**
@@ -242,7 +243,10 @@ function initializeFlatpickr() {
     dateFormat: lang === 'ja' ? 'Y年m月d日' : 'Y-m-d',
     disableMobile: true,
     placeholder: translations[lang].datePlaceholder,
-    allowInput: true
+    allowInput: true,
+    altInput: true,
+    altFormat: lang === 'ja' ? 'Y年m月d日' : 'F j, Y',
+    ariaDateFormat: lang === 'ja' ? 'Y年m月d日' : 'F j, Y'
   });
 }
 

@@ -42,7 +42,7 @@
   font-family: inherit;
   border: var(--input-border-width) solid var(--item-border);
   border-radius: var(--input-border-radius);
-  background-color: var(--item-bg);
+  background-color: var(--input-bg);
   color: var(--text-color);
   transition: var(--input-transition);
 }
@@ -71,7 +71,7 @@
   font-family: inherit;
   border: var(--input-border-width) solid var(--item-border);
   border-radius: var(--input-border-radius);
-  background-color: var(--item-bg);
+  background-color: var(--input-bg);
   color: var(--text-color);
   transition: var(--input-transition);
 }
@@ -108,7 +108,7 @@
   font-family: inherit;
   border: var(--input-border-width) solid var(--item-border);
   border-radius: var(--input-border-radius);
-  background-color: var(--item-bg);
+  background-color: var(--input-bg);
   color: var(--text-color);
   transition: var(--input-transition);
   cursor: pointer;
@@ -128,7 +128,7 @@
   font-family: inherit;
   border: var(--input-border-width) solid var(--item-border);
   border-radius: var(--input-border-radius);
-  background-color: var(--item-bg);
+  background-color: var(--input-bg);
   color: var(--text-color);
   transition: var(--input-transition);
   cursor: pointer;
@@ -170,7 +170,7 @@
   min-height: var(--input-height);
   font-family: inherit;
   border-radius: var(--input-border-radius);
-  background-color: var(--item-bg);
+  background-color: var(--input-bg);
   color: var(--text-color);
   transition: var(--input-transition);
 }
@@ -190,7 +190,7 @@
   font-family: inherit;
   border: var(--input-border-width) solid var(--item-border);
   border-radius: var(--input-border-radius);
-  background-color: var(--item-bg);
+  background-color: var(--input-bg);
   color: var(--text-color);
   transition: var(--input-transition);
 }

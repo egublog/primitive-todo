@@ -125,7 +125,9 @@ export class TodoView {
     // 削除ボタン
     const deleteButton = document.createElement('button');
     deleteButton.className = 'delete-btn';
-    deleteButton.textContent = '削除';
+    const lang = document.documentElement.getAttribute('data-lang') || 'ja';
+    deleteButton.textContent = window.translations[lang].deleteButton;
+    deleteButton.setAttribute('data-i18n', 'deleteButton');
     deleteButton.addEventListener('click', () => {
       if (!this.isLoading) {
         this.controller.deleteTodo(todo.id);
@@ -147,14 +149,16 @@ export class TodoView {
     // 優先度
     const prioritySpan = document.createElement('span');
     prioritySpan.className = `priority-indicator priority-${todo.priority.toLowerCase()}`;
-    prioritySpan.textContent = this.translateValue('priority', todo.priority);
+    prioritySpan.textContent = window.translations[lang].priority[todo.priority.toLowerCase()];
+    prioritySpan.setAttribute('data-i18n', `priority.${todo.priority.toLowerCase()}`);
     metaContainer.appendChild(prioritySpan);
 
     // カテゴリー
-    if (todo.category && todo.category !== 'なし') {
+    if (todo.category && todo.category !== 'none' && todo.category !== 'なし') {
       const categorySpan = document.createElement('span');
       categorySpan.className = 'category-tag';
-      categorySpan.textContent = this.translateValue('category', todo.category);
+      categorySpan.textContent = window.translations[lang].category[todo.category];
+      categorySpan.setAttribute('data-i18n', `category.${todo.category}`);
       metaContainer.appendChild(categorySpan);
     }
 
@@ -169,7 +173,8 @@ export class TodoView {
       }
       dueDateSpan.textContent = this.formatDueDate(todo.dueDate);
     } else {
-      dueDateSpan.textContent = '期限なし';
+      dueDateSpan.textContent = window.translations[lang].noDueDate;
+      dueDateSpan.setAttribute('data-i18n', 'noDueDate');
     }
     metaContainer.appendChild(dueDateSpan);
 
