@@ -13,8 +13,74 @@ export class TodoView {
       incompleteTodoList: document.getElementById('incompleteTodoList'),
       completedTodoList: document.getElementById('completedTodoList'),
       loadingIndicator: document.getElementById('loadingIndicator'),
-      errorContainer: document.getElementById('errorContainer')
+      errorContainer: document.getElementById('errorContainer'),
+      operationContainer: document.getElementById('operationContainer') || this.createOperationContainer()
     };
+  }
+
+  /**
+   * 操作状態表示用のコンテナを作成
+   * @returns {HTMLElement}
+   */
+  createOperationContainer() {
+    const container = document.createElement('div');
+    container.id = 'operationContainer';
+    container.className = 'operation-container';
+    document.body.appendChild(container);
+    return container;
+  }
+
+  /**
+   * 操作状態を更新
+   * @param {string} operationId - 操作のID
+   * @param {string} status - 状態(pending/fulfilled/rejected)
+   * @param {Error} error - エラー情報(オプション)
+   */
+  updateOperationState(operationId, status, error = null) {
+    let stateElement = document.getElementById(`operation-${operationId}`);
+    
+    if (!stateElement) {
+      stateElement = document.createElement('div');
+      stateElement.id = `operation-${operationId}`;
+      stateElement.className = 'operation-state';
+      this.elements.operationContainer.appendChild(stateElement);
+    }
+
+    // ステータスに応じたクラスを設定
+    stateElement.className = `operation-state operation-${status}`;
+    
+    // ステータスに応じたメッセージを設定
+    let message = '';
+    switch (status) {
+      case 'pending':
+        message = '処理中...';
+        break;
+      case 'fulfilled':
+        message = '完了しました';
+        break;
+      case 'rejected':
+        message = `エラー: ${error ? error.message : '不明なエラー'}`;
+        break;
+    }
+    
+    stateElement.textContent = message;
+
+    // アニメーション効果
+    stateElement.style.animation = 'fadeIn 0.3s ease-in-out';
+  }
+
+  /**
+   * 操作状態を削除
+   * @param {string} operationId - 操作のID
+   */
+  removeOperationState(operationId) {
+    const stateElement = document.getElementById(`operation-${operationId}`);
+    if (stateElement) {
+      stateElement.style.animation = 'fadeOut 0.3s ease-in-out';
+      stateElement.addEventListener('animationend', () => {
+        stateElement.remove();
+      }, { once: true });
+    }
   }
 
   setupEventListeners() {

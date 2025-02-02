@@ -5,7 +5,19 @@ export class TodoController {
   constructor() {
     this.view = new TodoView(this);
     this.isLoading = false;
+    this.operationStates = new Map(); // 操作状態を管理
     this.initialize();
+  }
+
+  /**
+   * 操作の状態を設定
+   * @param {string} operationId - 操作のID
+   * @param {string} status - 状態(pending/fulfilled/rejected)
+   * @param {Error} error - エラー情報(オプション)
+   */
+  setOperationState(operationId, status, error = null) {
+    this.operationStates.set(operationId, { status, error });
+    this.view.updateOperationState(operationId, status, error);
   }
 
   /**
@@ -42,11 +54,13 @@ export class TodoController {
   async addTodo(text, priority, dueDate, category) {
     if (this.isLoading) return;
 
+    const operationId = `add-${Date.now()}`;
     try {
       this.setLoading(true);
+      this.setOperationState(operationId, 'pending');
       // 日付文字列をISO形式に変換
       const formattedDueDate = dueDate ? new Date(dueDate + 'T23:59:59').toISOString() : null;
-      await addTodo({
+      const newTodo = await addTodo({
         title: text,
         description: text,
         priority,
@@ -57,10 +71,17 @@ export class TodoController {
       // 全件再取得して画面を更新
       const todos = await fetchTodos();
       this.view.render(todos);
+      this.setOperationState(operationId, 'fulfilled');
     } catch (error) {
       this.view.showError('Todoの追加に失敗しました');
+      this.setOperationState(operationId, 'rejected', error);
     } finally {
       this.setLoading(false);
+      // 5秒後に操作状態をクリア
+      setTimeout(() => {
+        this.operationStates.delete(operationId);
+        this.view.removeOperationState(operationId);
+      }, 5000);
     }
   }
 
@@ -71,16 +92,25 @@ export class TodoController {
   async deleteTodo(id) {
     if (this.isLoading) return;
 
+    const operationId = `delete-${id}`;
     try {
       this.setLoading(true);
+      this.setOperationState(operationId, 'pending');
       await deleteTodo(id);
       // 全件再取得して画面を更新
       const todos = await fetchTodos();
       this.view.render(todos);
+      this.setOperationState(operationId, 'fulfilled');
     } catch (error) {
       this.view.showError('Todoの削除に失敗しました');
+      this.setOperationState(operationId, 'rejected', error);
     } finally {
       this.setLoading(false);
+      // 5秒後に操作状態をクリア
+      setTimeout(() => {
+        this.operationStates.delete(operationId);
+        this.view.removeOperationState(operationId);
+      }, 5000);
     }
   }
 
@@ -91,8 +121,10 @@ export class TodoController {
   async toggleTodo(id) {
     if (this.isLoading) return;
 
+    const operationId = `toggle-${id}`;
     try {
       this.setLoading(true);
+      this.setOperationState(operationId, 'pending');
       // 現在のTodoリストを取得して、対象のTodoの状態を確認
       const todos = await fetchTodos();
       const todo = todos.find(t => t.id === id);
@@ -104,10 +136,17 @@ export class TodoController {
       // 全件再取得して画面を更新
       const updatedTodos = await fetchTodos();
       this.view.render(updatedTodos);
+      this.setOperationState(operationId, 'fulfilled');
     } catch (error) {
       this.view.showError('Todoの更新に失敗しました');
+      this.setOperationState(operationId, 'rejected', error);
     } finally {
       this.setLoading(false);
+      // 5秒後に操作状態をクリア
+      setTimeout(() => {
+        this.operationStates.delete(operationId);
+        this.view.removeOperationState(operationId);
+      }, 5000);
     }
   }
 
@@ -119,16 +158,25 @@ export class TodoController {
   async updateTodo(id, updates) {
     if (this.isLoading) return;
 
+    const operationId = `update-${id}`;
     try {
       this.setLoading(true);
+      this.setOperationState(operationId, 'pending');
       await updateTodo(id, updates);
       // 全件再取得して画面を更新
       const todos = await fetchTodos();
       this.view.render(todos);
+      this.setOperationState(operationId, 'fulfilled');
     } catch (error) {
       this.view.showError('Todoの更新に失敗しました');
+      this.setOperationState(operationId, 'rejected', error);
     } finally {
       this.setLoading(false);
+      // 5秒後に操作状態をクリア
+      setTimeout(() => {
+        this.operationStates.delete(operationId);
+        this.view.removeOperationState(operationId);
+      }, 5000);
     }
   }
 }

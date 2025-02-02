@@ -18,4 +18,12 @@
   --theme-toggle-bg: rgba(0, 0, 0, 0.05);
   --input-bg: linear-gradient(to bottom, var(--bg-color), var(--item-bg));
   --section-bg: linear-gradient(to bottom, var(--bg-color), var(--item-bg));
+
+  /* 操作状態の色 */
+  --color-info: #3b82f6;
+  --color-info-text: #ffffff;
+  --color-success: #10b981;
+  --color-success-text: #ffffff;
+  --color-error: #ef4444;
+  --color-error-text: #ffffff;
 }

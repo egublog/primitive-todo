@@ -1,0 +1,61 @@
+/* 操作状態のコンテナ */
+.operation-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+}
+
+/* 操作状態の表示 */
+.operation-state {
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 処理中の状態 */
+.operation-pending {
+  background-color: var(--color-info);
+  color: var(--color-info-text);
+}
+
+/* 完了状態 */
+.operation-fulfilled {
+  background-color: var(--color-success);
+  color: var(--color-success-text);
+}
+
+/* エラー状態 */
+.operation-rejected {
+  background-color: var(--color-error);
+  color: var(--color-error-text);
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
