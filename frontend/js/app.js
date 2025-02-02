@@ -144,14 +144,24 @@ function toggleLanguage() {
   updatePageText(newLang);
   
   // flatpickrの言語を更新
-  const datePicker = document.getElementById('dueDateInput')._flatpickr;
-  if (datePicker) {
+  const input = document.querySelector('#dueDateInput');
+  if (input && input._flatpickr) {
     const { translations } = window;
     if (translations && translations[newLang]) {
+      const datePicker = input._flatpickr;
       datePicker.set('locale', newLang === 'ja' ? 'ja' : 'en');
       datePicker.set('dateFormat', newLang === 'ja' ? 'Y年m月d日' : 'Y-m-d');
-      datePicker.config.placeholder = translations[newLang].datePlaceholder;
-      datePicker.input.placeholder = translations[newLang].datePlaceholder;
+      
+      // altInputのプレースホルダーを更新
+      const altInput = input.nextElementSibling;
+      if (altInput) {
+        altInput.placeholder = translations[newLang].datePlaceholder;
+      }
+      
+      // 日付が選択されていない場合は再初期化して新しいプレースホルダーを表示
+      if (!datePicker.selectedDates.length) {
+        datePicker.clear();
+      }
     }
   }
 }
@@ -238,16 +248,24 @@ function initializeFlatpickr() {
   const { translations } = window;
   if (!translations || !translations[lang]) return;
 
-  flatpickr('#dueDateInput', {
+  const datePicker = flatpickr('#dueDateInput', {
     locale: lang === 'ja' ? 'ja' : 'en',
     dateFormat: lang === 'ja' ? 'Y年m月d日' : 'Y-m-d',
     disableMobile: true,
-    placeholder: translations[lang].datePlaceholder,
     allowInput: true,
     altInput: true,
     altFormat: lang === 'ja' ? 'Y年m月d日' : 'F j, Y',
     ariaDateFormat: lang === 'ja' ? 'Y年m月d日' : 'F j, Y'
   });
+
+  // プレースホルダーを設定
+  const input = document.querySelector('#dueDateInput');
+  if (input) {
+    const altInput = input.nextElementSibling; // flatpickrが生成した実際の入力フィールド
+    if (altInput) {
+      altInput.placeholder = translations[lang].datePlaceholder;
+    }
+  }
 }
 
 /**
