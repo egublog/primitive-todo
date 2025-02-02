@@ -87,6 +87,41 @@ export class TodoView {
     textSpan.className = 'todo-text';
     textSpan.textContent = todo.title;
 
+    // テキストクリックで編集モードを有効化
+    textSpan.addEventListener('click', () => {
+      if (this.isLoading || todo.completed) return;
+      
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'todo-edit-input';
+      input.value = todo.title;
+      
+      // 現在のtextSpanを一時的に非表示
+      textSpan.style.display = 'none';
+      firstRow.insertBefore(input, deleteButton);
+      input.focus();
+      
+      // 編集完了時の処理
+      const finishEdit = () => {
+        const newText = input.value.trim();
+        if (newText && newText !== todo.title) {
+          this.controller.updateTodo(todo.id, { title: newText });
+        }
+        input.remove();
+        textSpan.style.display = '';
+      };
+      
+      // Enterキーで編集完了
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          finishEdit();
+        }
+      });
+      
+      // フォーカスを失ったときも編集完了
+      input.addEventListener('blur', finishEdit);
+    });
+
     // 削除ボタン
     const deleteButton = document.createElement('button');
     deleteButton.className = 'delete-btn';

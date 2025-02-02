@@ -119,7 +119,7 @@
 }
 
 /* 編集モード */
-.edit-input {
+.todo-edit-input {
   flex: 1;
   font-size: var(--font-lg);
   padding: 0.2rem 0.5rem;
@@ -128,9 +128,11 @@
   background-color: var(--input-bg);
   color: var(--text-color);
   min-width: 0;
+  margin: 0;
+  height: 100%;
 }
 
-.edit-input:focus {
+.todo-edit-input:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px var(--focus-ring-color);
