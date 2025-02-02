@@ -44,11 +44,13 @@ export class TodoController {
 
     try {
       this.setLoading(true);
+      // 日付文字列をISO形式に変換
+      const formattedDueDate = dueDate ? new Date(dueDate + 'T23:59:59').toISOString() : null;
       await addTodo({
         title: text,
         description: text,
         priority,
-        dueDate,
+        dueDate: formattedDueDate,
         category,
         completed: false
       });
