@@ -1,10 +1,13 @@
 package com.example.services;
 
+import com.example.exceptions.ResourceNotFoundException;
+import com.example.exceptions.ValidationException;
 import com.example.models.Todo;
 import com.example.repositories.TodoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,28 +16,71 @@ import java.util.Optional;
 public class TodoService {
     private final TodoRepository todoRepository;
 
+    private static final List<String> VALID_PRIORITIES = List.of("low", "medium", "high");
+    private static final List<String> VALID_CATEGORIES = List.of("none", "work", "personal", "shopping", "study");
+    private static final int MAX_TITLE_LENGTH = 100;
+    private static final int MAX_DESCRIPTION_LENGTH = 500;
+
     public TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
 
+    /**
+     * 全てのTodoを取得
+     */
     public List<Todo> getAllTodos() {
         return todoRepository.findAll();
     }
 
+    /**
+     * IDに基づいてTodoを取得
+     */
     public Optional<Todo> getTodoById(Long id) {
         return todoRepository.findById(id);
     }
 
+    /**
+     * 新規Todoを作成
+     */
     public Todo createTodo(Todo todo) {
-        validateTodo(todo);
+        List<String> validationErrors = validateTodo(todo);
+        if (!validationErrors.isEmpty()) {
+            throw new ValidationException("Todoの検証に失敗しました", validationErrors);
+        }
         return todoRepository.save(todo);
     }
 
+    /**
+     * Todoを更新
+     */
     public Todo updateTodo(Todo updates) {
         Todo existingTodo = todoRepository.findById(updates.getId())
-            .orElseThrow(() -> new IllegalArgumentException("Todo not found with id: " + updates.getId()));
+            .orElseThrow(() -> new ResourceNotFoundException("Todo", "id", updates.getId()));
 
-        // 更新されたフィールドのみを反映
+        updateTodoFields(existingTodo, updates);
+        
+        List<String> validationErrors = validateTodo(existingTodo);
+        if (!validationErrors.isEmpty()) {
+            throw new ValidationException("更新されたTodoの検証に失敗しました", validationErrors);
+        }
+
+        return todoRepository.save(existingTodo);
+    }
+
+    /**
+     * Todoを削除
+     */
+    public void deleteTodo(Long id) {
+        if (!todoRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Todo", "id", id);
+        }
+        todoRepository.deleteById(id);
+    }
+
+    /**
+     * Todoのフィールドを更新
+     */
+    private void updateTodoFields(Todo existingTodo, Todo updates) {
         if (updates.getTitle() != null) {
             existingTodo.setTitle(updates.getTitle());
         }
@@ -50,40 +96,38 @@ public class TodoService {
         if (updates.getDueDate() != null) {
             existingTodo.setDueDate(updates.getDueDate());
         }
-        // completedフィールドは特別扱い(nullでも更新可能)
         existingTodo.setCompleted(updates.isCompleted());
-
-        // 更新後のTodoを検証
-        validateTodo(existingTodo);
-        return todoRepository.save(existingTodo);
     }
 
-    public void deleteTodo(Long id) {
-        todoRepository.deleteById(id);
-    }
+    /**
+     * Todoのバリデーション
+     * @return バリデーションエラーのリスト
+     */
+    private List<String> validateTodo(Todo todo) {
+        List<String> errors = new ArrayList<>();
 
-    private static final List<String> VALID_PRIORITIES = List.of("low", "medium", "high");
-    private static final List<String> VALID_CATEGORIES = List.of("none", "work", "personal", "shopping", "study");
-
-    private void validateTodo(Todo todo) {
+        // タイトルのバリデーション
         if (todo.getTitle() == null || todo.getTitle().trim().isEmpty()) {
-            throw new IllegalArgumentException("Todo title cannot be empty");
-        }
-        
-        if (todo.getTitle().length() > 100) {
-            throw new IllegalArgumentException("Todo title cannot exceed 100 characters");
-        }
-        
-        if (todo.getDescription() != null && todo.getDescription().length() > 500) {
-            throw new IllegalArgumentException("Todo description cannot exceed 500 characters");
+            errors.add("タイトルは必須です");
+        } else if (todo.getTitle().length() > MAX_TITLE_LENGTH) {
+            errors.add(String.format("タイトルは%d文字以内で入力してください", MAX_TITLE_LENGTH));
         }
 
+        // 説明のバリデーション
+        if (todo.getDescription() != null && todo.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
+            errors.add(String.format("説明は%d文字以内で入力してください", MAX_DESCRIPTION_LENGTH));
+        }
+
+        // 優先度のバリデーション
         if (todo.getPriority() == null || !VALID_PRIORITIES.contains(todo.getPriority())) {
-            throw new IllegalArgumentException("Invalid priority value. Must be one of: " + String.join(", ", VALID_PRIORITIES));
+            errors.add("優先度は以下のいずれかを選択してください: " + String.join(", ", VALID_PRIORITIES));
         }
 
+        // カテゴリーのバリデーション
         if (todo.getCategory() == null || !VALID_CATEGORIES.contains(todo.getCategory())) {
-            throw new IllegalArgumentException("Invalid category value. Must be one of: " + String.join(", ", VALID_CATEGORIES));
+            errors.add("カテゴリーは以下のいずれかを選択してください: " + String.join(", ", VALID_CATEGORIES));
         }
+
+        return errors;
     }
 }
