@@ -5,11 +5,11 @@
   --todo-gap: 0.5rem;
   --todo-border-width: 1px;
   --todo-priority-border-width: 4px;
-  
+
   /* アニメーション設定 */
   --slide-distance: 20px;
   --slide-duration: 0.3s;
-  
+
   /* 優先度カラー */
   --priority-high: #ef4444;
   --priority-medium: #f59e0b;
@@ -31,9 +31,8 @@
   animation: slideIn var(--slide-duration) cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   transition: transform var(--transition-base),
-              box-shadow var(--transition-base),
-              border-color var(--transition-base),
-              opacity var(--transition-base);
+    box-shadow var(--transition-base), border-color var(--transition-base),
+    opacity var(--transition-base);
   will-change: transform, opacity;
   opacity: 1;
 }
