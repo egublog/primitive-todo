@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
+    <!-- 基本メタ情報 -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="シンプルで使いやすいタスク管理アプリケーション"
+    />
+    <meta name="theme-color" content="#ffffff" />
     <title>プリミティブTodo</title>
+
+    <!-- パフォーマンス最適化のためのプリコネクト -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+
+    <!-- スタイルシート -->
     <link
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap"
       rel="stylesheet"
@@ -19,23 +31,35 @@
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
     <link rel="stylesheet" href="./styles/main.css" />
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+
+    <!-- スクリプト -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"
+      defer
+    ></script>
     <script type="module" src="./js/i18n/translations.js"></script>
   </head>
   <body>
     <div class="container">
-      <header class="header">
+      <!-- アプリケーションヘッダー -->
+      <header class="header" role="banner">
         <h1 id="appTitle" data-i18n="title">プリミティブTodo</h1>
         <div class="header-buttons">
           <button
             id="toggleTheme"
             class="theme-toggle"
             aria-label="テーマ切り替え"
+            data-i18n-aria="themeToggle"
           >
             <i class="fas fa-moon" aria-hidden="true"></i>
           </button>
-          <button id="toggleLang" class="lang-toggle" aria-label="言語切り替え">
+          <button
+            id="toggleLang"
+            class="lang-toggle"
+            aria-label="言語切り替え"
+            data-i18n-aria="langToggle"
+          >
             <i class="fas fa-language" aria-hidden="true"></i>
           </button>
         </div>
@@ -59,21 +83,26 @@
           aria-live="assertive"
         ></div>
 
-        <form class="todo-input" role="form" aria-label="タスク入力フォーム">
+        <!-- タスク入力フォーム -->
+        <form class="todo-input" role="form" aria-labelledby="formTitle">
+          <h2 id="formTitle" class="visually-hidden">タスク入力フォーム</h2>
           <div class="input-group">
-            <label
-              for="todoInput"
-              class="visually-hidden"
-              data-i18n="inputPlaceholder"
-              >タスク名</label
-            >
-            <input
-              type="text"
-              id="todoInput"
-              placeholder="新しいタスクを入力"
-              data-i18n="inputPlaceholder"
-              aria-required="true"
-            />
+            <div class="task-input-wrapper">
+              <label
+                for="todoInput"
+                class="visually-hidden"
+                data-i18n="inputPlaceholder"
+                >タスク名</label
+              >
+              <input
+                type="text"
+                id="todoInput"
+                name="todoInput"
+                placeholder="新しいタスクを入力"
+                data-i18n="inputPlaceholder"
+                aria-required="true"
+              />
+            </div>
             <div class="select-group">
               <label
                 for="prioritySelect"
@@ -83,9 +112,11 @@
               >
               <select
                 id="prioritySelect"
+                name="priority"
                 class="priority-select"
                 aria-label="優先度選択"
                 data-i18n-aria="priority.label"
+                required
               >
                 <option value="low" data-ja="低" data-en="Low">低</option>
                 <option value="medium" selected data-ja="中" data-en="Medium">
@@ -101,9 +132,11 @@
               >
               <select
                 id="categorySelect"
+                name="category"
                 class="category-select"
                 aria-label="カテゴリー選択"
                 data-i18n-aria="category.label"
+                required
               >
                 <option
                   value="none"
@@ -132,11 +165,13 @@
               <input
                 type="date"
                 id="dueDateInput"
+                name="dueDate"
                 class="date-input"
                 pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
                 aria-label="期限日選択"
                 data-i18n-aria="datePlaceholder"
                 placeholder="期限日を選択"
+                min="2024-01-01"
               />
             </div>
           </div>
@@ -145,6 +180,8 @@
             <span data-i18n="addButton">追加</span>
           </button>
         </form>
+
+        <!-- カテゴリーフィルター -->
         <nav class="category-filter" aria-label="カテゴリーフィルター">
           <label
             for="categoryFilter"
@@ -172,8 +209,15 @@
             <option value="study" data-ja="学習" data-en="Study">学習</option>
           </select>
         </nav>
-        <div class="todo-sections" role="region" aria-label="Todoリスト">
-          <section class="todo-section">
+
+        <!-- Todoリスト表示領域 -->
+        <div
+          class="todo-sections"
+          role="region"
+          aria-labelledby="todoListTitle"
+        >
+          <h2 id="todoListTitle" class="visually-hidden">Todoリスト</h2>
+          <section class="todo-section" aria-labelledby="incompleteTag">
             <h2
               id="incompleteTag"
               class="section-tag incomplete-tag"
@@ -185,7 +229,7 @@
               <!-- 未完了のTodoアイテムがここに追加されます -->
             </ul>
           </section>
-          <section class="todo-section">
+          <section class="todo-section" aria-labelledby="completeTag">
             <h2
               id="completeTag"
               class="section-tag complete-tag"
