@@ -60,10 +60,16 @@ export class TodoController {
       this.setLoading(true);
       this.setOperationState(operationId, "pending");
       console.log("Todo追加開始:", { text, priority, dueDate, category });
-      // 日付文字列をISO形式に変換
-      const formattedDueDate = dueDate
-        ? new Date(dueDate + "T23:59:59").toISOString()
-        : null;
+      // 日本語形式の日付文字列をISO形式に変換
+      let formattedDueDate = null;
+      if (dueDate) {
+        // "2025年02月13日" -> "2025-02-13" の形式に変換
+        const matched = dueDate.match(/(\d{4})年(\d{2})月(\d{2})日/);
+        if (matched) {
+          const [_, year, month, day] = matched;
+          formattedDueDate = new Date(`${year}-${month}-${day}T23:59:59`).toISOString();
+        }
+      }
       console.log("フォーマット済み日付:", formattedDueDate);
       const newTodo = await addTodo({
         title: text,
