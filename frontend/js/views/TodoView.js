@@ -179,14 +179,12 @@ export class TodoView {
 
     const currentPriority = element.getAttribute("data-priority");
     const newPriority = (todo.priority || "medium").toLowerCase();
-    if (currentPriority !== newPriority) {
-      element.setAttribute("data-priority", newPriority);
-      const prioritySpan = element.querySelector(".priority-indicator");
-      prioritySpan.className = `priority-indicator priority-${newPriority}`;
-      const lang = document.documentElement.getAttribute("data-lang") || "ja";
-      prioritySpan.textContent =
-        window.translations[lang].priority[newPriority];
-    }
+    // 優先度の更新は常に行う
+    element.setAttribute("data-priority", newPriority);
+    const prioritySpan = element.querySelector(".priority-indicator");
+    prioritySpan.className = `priority-indicator priority-${newPriority}`;
+    const lang = document.documentElement.getAttribute("data-lang") || "ja";
+    prioritySpan.textContent = window.translations[lang].priority[newPriority];
 
     const checkbox = element.querySelector(".todo-checkbox");
     if (checkbox.checked !== todo.completed) {

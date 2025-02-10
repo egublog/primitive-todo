@@ -74,7 +74,7 @@ export class TodoController {
       const newTodo = await addTodo({
         title: text,
         description: text,
-        priority,
+        priority: priority.toLowerCase(), // 優先度を小文字に変換
         dueDate: formattedDueDate,
         category,
         completed: false,
@@ -155,11 +155,11 @@ export class TodoController {
       if (!todo) {
         throw new Error("Todo not found");
       }
-      // 現在のTodoの全フィールドを保持しつつ、completed状態のみを反転
+      // 現在のTodoの全フィールドを保持しつつ、completed状態のみを変更
       await updateTodo(id, {
         title: todo.title,
         description: todo.description,
-        priority: todo.priority,
+        priority: todo.priority.toLowerCase(), // 小文字に変換して送信
         category: todo.category,
         dueDate: todo.dueDate,
         completed: !todo.completed
