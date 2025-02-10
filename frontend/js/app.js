@@ -5,7 +5,7 @@ import { AppInitializer } from './services/appInitializer.js';
 
 // アプリケーションの初期化
 const APP_CONFIG = {
-  debug: false,
+  debug: true,
   version: '1.0.0',
   storagePrefix: 'primitive-todo_'
 };

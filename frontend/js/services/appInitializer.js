@@ -163,7 +163,7 @@ export class AppInitializer {
    */
   prefetchAssets() {
     const assets = [
-      '/styles/themes/dark.css',
+      './styles/themes/dark.css',
       'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'
     ];
 

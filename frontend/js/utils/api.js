@@ -46,6 +46,7 @@ export async function fetchTodos() {
  * @returns {Promise<Object>}
  */
 export async function addTodo(todo) {
+  console.log("Adding todo:", todo);
   try {
     const response = await fetch("http://localhost:8080/api/todos", {
       method: "POST",
@@ -60,9 +61,14 @@ export async function addTodo(todo) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log("Todo added successfully:", data);
+    return data;
   } catch (error) {
     console.error("Todo追加エラー:", error);
+    if (error.response) {
+      console.error("サーバーレスポンス:", await error.response.text());
+    }
     throw error;
   }
 }

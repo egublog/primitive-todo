@@ -18,8 +18,18 @@ public class TodoDto {
     private boolean completed;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String priority = "medium";
+    private String category = "none";
 
     // Getters
+    public String getPriority() {
+        return priority;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
     public Long getId() {
         return id;
     }
@@ -75,5 +85,13 @@ public class TodoDto {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

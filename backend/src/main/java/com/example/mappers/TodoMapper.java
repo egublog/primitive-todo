@@ -19,6 +19,8 @@ public class TodoMapper {
         dto.setId(todo.getId());
         dto.setTitle(todo.getTitle());
         dto.setDescription(todo.getDescription());
+        dto.setPriority(todo.getPriority());
+        dto.setCategory(todo.getCategory());
         dto.setDueDate(todo.getDueDate());
         dto.setCompleted(todo.isCompleted());
         dto.setCreatedAt(todo.getCreatedAt());
@@ -42,6 +44,8 @@ public class TodoMapper {
         }
         todo.setTitle(dto.getTitle());
         todo.setDescription(dto.getDescription());
+        todo.setPriority(dto.getPriority());
+        todo.setCategory(dto.getCategory());
         todo.setDueDate(dto.getDueDate());
         todo.setCompleted(dto.isCompleted());
 
@@ -66,6 +70,16 @@ public class TodoMapper {
         // 説明が提供されている場合のみ更新
         if (dto.getDescription() != null) {
             todo.setDescription(dto.getDescription());
+        }
+
+        // 優先度が提供されている場合のみ更新
+        if (dto.getPriority() != null) {
+            todo.setPriority(dto.getPriority());
+        }
+
+        // カテゴリーが提供されている場合のみ更新
+        if (dto.getCategory() != null) {
+            todo.setCategory(dto.getCategory());
         }
 
         // 期限が提供されている場合のみ更新
