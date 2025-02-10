@@ -149,8 +149,15 @@ export class TodoController {
       if (!todo) {
         throw new Error("Todo not found");
       }
-      // 現在の完了状態を反転
-      await updateTodo(id, { completed: !todo.completed });
+      // 現在のTodoの全フィールドを保持しつつ、completed状態のみを反転
+      await updateTodo(id, {
+        title: todo.title,
+        description: todo.description,
+        priority: todo.priority,
+        category: todo.category,
+        dueDate: todo.dueDate,
+        completed: !todo.completed
+      });
       // 全件再取得して画面を更新
       const updatedTodos = await fetchTodos();
       this.view.render(updatedTodos);
