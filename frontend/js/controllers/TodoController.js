@@ -67,7 +67,9 @@ export class TodoController {
         const matched = dueDate.match(/(\d{4})年(\d{2})月(\d{2})日/);
         if (matched) {
           const [_, year, month, day] = matched;
-          formattedDueDate = new Date(`${year}-${month}-${day}T23:59:59`).toISOString();
+          formattedDueDate = new Date(
+            `${year}-${month}-${day}T23:59:59`
+          ).toISOString();
         }
       }
       console.log("フォーマット済み日付:", formattedDueDate);
@@ -162,7 +164,7 @@ export class TodoController {
         priority: todo.priority.toLowerCase(), // 小文字に変換して送信
         category: todo.category,
         dueDate: todo.dueDate,
-        completed: !todo.completed
+        completed: !todo.completed,
       });
       // 全件再取得して画面を更新
       const updatedTodos = await fetchTodos();

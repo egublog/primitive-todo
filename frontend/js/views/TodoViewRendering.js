@@ -30,7 +30,7 @@ export class TodoViewRendering {
     };
 
     const existingItems = this.collectExistingItems();
-    
+
     todos.forEach((todo) => {
       const existingItem = existingItems.get(todo.id.toString());
       updateTodoElement(todo, existingItem);

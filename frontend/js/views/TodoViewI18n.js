@@ -4,7 +4,8 @@ export class TodoViewI18n {
   }
 
   translateValue(type, value) {
-    const lang = document.documentElement.getAttribute("data-lang") || this.defaultLang;
+    const lang =
+      document.documentElement.getAttribute("data-lang") || this.defaultLang;
     const { translations } = window;
 
     if (!translations || !translations[lang]) return value;
@@ -21,7 +22,9 @@ export class TodoViewI18n {
   }
 
   getCurrentLang() {
-    return document.documentElement.getAttribute("data-lang") || this.defaultLang;
+    return (
+      document.documentElement.getAttribute("data-lang") || this.defaultLang
+    );
   }
 
   getTranslation(key, defaultValue = "") {

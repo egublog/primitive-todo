@@ -130,12 +130,12 @@ export class TodoViewDOM {
   createPrioritySpan(todo) {
     const priority = (todo.priority || "medium").toLowerCase();
     const lang = document.documentElement.getAttribute("data-lang") || "ja";
-    
+
     const prioritySpan = document.createElement("span");
     prioritySpan.className = `priority-indicator priority-${priority}`;
     prioritySpan.textContent = window.translations[lang].priority[priority];
     prioritySpan.setAttribute("data-i18n", `priority.${priority}`);
-    
+
     return prioritySpan;
   }
 
@@ -147,19 +147,19 @@ export class TodoViewDOM {
   createCategorySpan(todo) {
     const lang = document.documentElement.getAttribute("data-lang") || "ja";
     const category = todo.category || "none";
-    
+
     const categorySpan = document.createElement("span");
     categorySpan.className = "category-tag";
     categorySpan.textContent = window.translations[lang].category[category];
     categorySpan.setAttribute("data-i18n", `category.${category}`);
-    
+
     return categorySpan;
   }
 
   createDueDateSpan(todo) {
     const dueDateSpan = document.createElement("span");
     dueDateSpan.className = "due-date";
-    
+
     if (todo.dueDate) {
       const dueDate = new Date(todo.dueDate);
       const now = new Date();
@@ -172,7 +172,7 @@ export class TodoViewDOM {
       dueDateSpan.textContent = window.translations[lang].noDueDate;
       dueDateSpan.setAttribute("data-i18n", "noDueDate");
     }
-    
+
     return dueDateSpan;
   }
 
@@ -211,7 +211,7 @@ export class TodoViewDOM {
     const currentPriority = element.getAttribute("data-priority");
     const newPriority = (todo.priority || "medium").toLowerCase();
     element.setAttribute("data-priority", newPriority);
-    
+
     const prioritySpan = element.querySelector(".priority-indicator");
     prioritySpan.className = `priority-indicator priority-${newPriority}`;
     const lang = document.documentElement.getAttribute("data-lang") || "ja";

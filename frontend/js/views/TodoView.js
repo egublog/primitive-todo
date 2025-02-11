@@ -7,7 +7,7 @@ import { TodoViewRendering } from "./TodoViewRendering.js";
 export class TodoView extends TodoViewBase {
   constructor(controller) {
     super(controller);
-    
+
     this.operations = new TodoViewOperations(this.elements);
     this.i18n = new TodoViewI18n();
     this.dom = new TodoViewDOM(this.elements, this.controller, this.isLoading);
