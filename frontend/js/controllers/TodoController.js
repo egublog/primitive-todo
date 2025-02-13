@@ -196,10 +196,24 @@ export class TodoController {
     try {
       this.setLoading(true);
       this.setOperationState(operationId, "pending");
-      await updateTodo(id, updates);
-      // 全件再取得して画面を更新
+      // 現在のTodoリストを取得して、対象のTodoの状態を確認
       const todos = await fetchTodos();
-      this.view.render(todos);
+      const todo = todos.find((t) => t.id === id);
+      if (!todo) {
+        throw new Error("Todo not found");
+      }
+      // 現在のTodoの全フィールドを保持しつつ、更新内容を適用
+      await updateTodo(id, {
+        title: updates.title || todo.title,
+        description: updates.description || todo.description,
+        priority: todo.priority.toLowerCase(), // 既存の優先度を維持
+        category: updates.category || todo.category,
+        dueDate: updates.dueDate || todo.dueDate,
+        completed: updates.completed !== undefined ? updates.completed : todo.completed,
+      });
+      // 全件再取得して画面を更新
+      const updatedTodos = await fetchTodos();
+      this.view.render(updatedTodos);
       this.setOperationState(operationId, "fulfilled");
     } catch (error) {
       this.view.showError("Todoの更新に失敗しました");
