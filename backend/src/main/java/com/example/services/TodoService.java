@@ -4,15 +4,13 @@ import com.example.exceptions.ResourceNotFoundException;
 import com.example.exceptions.ValidationException;
 import com.example.models.Todo;
 import com.example.repositories.TodoRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@Transactional
 public class TodoService {
     private final TodoRepository todoRepository;
 

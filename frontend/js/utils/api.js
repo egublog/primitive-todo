@@ -6,6 +6,7 @@ export async function fetchTodos() {
   try {
     const response = await fetch("http://localhost:8080/api/todos", {
       method: "GET",
+      mode: 'cors',
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -50,6 +51,7 @@ export async function addTodo(todo) {
   try {
     const response = await fetch("http://localhost:8080/api/todos", {
       method: "POST",
+      mode: 'cors',
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -83,6 +85,7 @@ export async function updateTodo(id, updates) {
   try {
     const response = await fetch(`http://localhost:8080/api/todos/${id}`, {
       method: "PUT",
+      mode: 'cors',
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -110,6 +113,7 @@ export async function deleteTodo(id) {
   try {
     const response = await fetch(`http://localhost:8080/api/todos/${id}`, {
       method: "DELETE",
+      mode: 'cors',
     });
 
     if (!response.ok) {

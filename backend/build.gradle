@@ -1,8 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.3'
-    id 'io.spring.dependency-management' version '1.1.4'
-    id 'org.flywaydb.flyway' version '9.22.3'
+    id 'application'
 }
 
 group = 'com.example'
@@ -14,26 +12,44 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Jettyサーバー
+    implementation 'org.eclipse.jetty:jetty-server:9.4.51.v20230217'
+    implementation 'org.eclipse.jetty:jetty-servlet:9.4.51.v20230217'
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    
+    // SQLite JDBC
     implementation 'org.xerial:sqlite-jdbc:3.43.0.0'
-    implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.4.Final'
-    implementation 'org.hibernate:hibernate-core:6.4.4.Final'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.flywaydb:flyway-core'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
     
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // JSON処理
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
     
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // コネクションプール
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+    
+    // ロギング
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    
+    // テスト
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.mockito:mockito-core:5.3.1'
+}
+
+application {
+    mainClass = 'com.example.Application'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-bootJar {
+jar {
     archiveFileName = 'todo-app.jar'
+    manifest {
+        attributes 'Main-Class': 'com.example.Application'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
