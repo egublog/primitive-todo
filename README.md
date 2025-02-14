@@ -27,9 +27,9 @@
   - モジュラーアーキテクチャ
 
 ### バックエンド
-- Java
+- Java (Servlet API)
 - SQLite (^3.0.0)
-- RESTful API
+- 純粋なJavaによるRESTful API実装
 
 ## アーキテクチャ概要
 
@@ -67,16 +67,16 @@ backend/
 │   └── main/
 │       ├── java/
 │       │   └── com/example/
-│       │       ├── controllers/  # APIエンドポイント
-│       │       ├── services/     # ビジネスロジック
-│       │       ├── repositories/ # データアクセス
-│       │       ├── models/      # データモデル
-│       │       ├── dto/         # データ転送オブジェクト
-│       │       ├── mappers/     # モデル変換
-│       │       └── exceptions/   # 例外処理
+│       │       ├── Application.java     # アプリケーションエントリーポイント
+│       │       ├── config/             # アプリケーション設定
+│       │       ├── controllers/        # Servletベースのコントローラー
+│       │       ├── services/           # ビジネスロジック
+│       │       ├── repositories/       # SQLiteデータアクセス
+│       │       ├── models/            # データモデル
+│       │       └── exceptions/         # 例外処理
 │       └── resources/
-│           └── db/migrations/    # DBマイグレーション
-└── test/                        # テストコード
+│           └── db/                    # SQLiteデータベース
+└── test/                              # テストコード
 ```
 
 ## APIエンドポイント
@@ -104,21 +104,22 @@ git clone https://github.com/example/primitive-todo.git
 cd primitive-todo
 ```
 
-2. バックエンドの設定
+2. バックエンドのコンパイル
 ```bash
 cd backend
-./gradlew build
+javac -d target src/main/java/com/example/**/*.java
 ```
 
 3. データベースの初期化
 ```bash
-./gradlew flywayMigrate
+# SQLiteデータベースファイルの作成
+sqlite3 src/main/resources/db/todo.db < src/main/resources/db/schema.sql
 ```
 
 4. アプリケーションの起動
 ```bash
-# バックエンド起動
-./gradlew bootRun
+# バックエンド起動（Tomcatなどのサーブレットコンテナが必要）
+java -cp target com.example.Application
 
 # フロントエンド（別ターミナルで）
 cd ../frontend
@@ -132,7 +133,8 @@ open index.html
 ### バックエンドテスト
 ```bash
 cd backend
-./gradlew test
+javac -d target/test src/test/java/com/example/**/*.java
+java -cp target/test com.example.TestRunner
 ```
 
 ### フロントエンドテスト
