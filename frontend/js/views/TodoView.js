@@ -124,7 +124,7 @@ export class TodoView {
         const container = todo.completed
           ? this.elements.completedTodoList
           : this.elements.incompleteTodoList;
-        container.insertBefore(newItem, container.firstChild);
+        container.appendChild(newItem);
         return;
       }
 
@@ -142,7 +142,7 @@ export class TodoView {
           "animationend",
           () => {
             const newItem = this.createTodoElement(todo);
-            targetContainer.insertBefore(newItem, targetContainer.firstChild);
+            targetContainer.appendChild(newItem);
             existingItem.remove();
           },
           { once: true }
