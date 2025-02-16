@@ -79,7 +79,9 @@ backend/
 └── test/                              # テストコード
 ```
 
-## APIエンドポイント
+## API仕様
+
+### エンドポイント一覧
 
 | メソッド | エンドポイント    | 説明           | レスポンス形式 |
 |---------|-----------------|----------------|--------------|
@@ -88,6 +90,74 @@ backend/
 | GET     | /api/todos/{id}| 特定のTodo取得   | TodoDto      |
 | PUT     | /api/todos/{id}| Todo更新        | TodoDto      |
 | DELETE  | /api/todos/{id}| Todo削除        | void         |
+
+### データモデル
+
+#### TodoDto
+```json
+{
+  "id": "string",
+  "title": "string",
+  "description": "string",
+  "category": "string",
+  "completed": boolean,
+  "createdAt": "string (ISO 8601)",
+  "updatedAt": "string (ISO 8601)"
+}
+```
+
+#### バリデーションルール
+- title: 必須、1-100文字
+- description: 任意、0-500文字
+- category: 任意、1-50文字
+- completed: 必須、真偽値
+
+### リクエスト例
+
+#### Todo作成
+```bash
+curl -X POST http://localhost:8080/api/todos \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "プロジェクトの計画作成",
+    "description": "次期プロジェクトの計画書を作成する",
+    "category": "仕事"
+  }'
+```
+
+### レスポンス形式
+
+#### 成功時レスポンス
+```json
+{
+  "status": "success",
+  "data": {
+    // TodoDtoオブジェクト
+  }
+}
+```
+
+#### エラーレスポンス
+```json
+{
+  "status": "error",
+  "code": "VALIDATION_ERROR",
+  "message": "バリデーションエラー",
+  "errors": [
+    {
+      "field": "title",
+      "message": "タイトルは必須です"
+    }
+  ]
+}
+```
+
+### ステータスコード
+- 200 OK: リクエスト成功
+- 201 Created: リソース作成成功
+- 400 Bad Request: バリデーションエラー
+- 404 Not Found: リソースが存在しない
+- 500 Internal Server Error: サーバーエラー
 
 ## 開発環境セットアップ
 
@@ -144,6 +214,80 @@ cd frontend
 open tests/test.html
 ```
 
+## 環境変数設定
+
+プロジェクトを実行する前に、以下の環境変数を設定してください：
+
+```bash
+# バックエンド設定
+DB_PATH=src/main/resources/db/todo.db
+SERVER_PORT=8080
+LOG_LEVEL=INFO
+
+# フロントエンド設定
+API_BASE_URL=http://localhost:8080/api
+DEFAULT_LANGUAGE=ja
+DEFAULT_THEME=light
+```
+
+## ブラウザ互換性
+
+以下のブラウザバージョンでテスト済みです：
+- Google Chrome 120以降
+- Firefox 115以降
+- Safari 16以降
+- Edge 120以降
+
+## トラブルシューティング
+
+### よくある問題と解決方法
+
+1. データベース接続エラー
+```bash
+# データベースファイルの権限確認
+ls -l src/main/resources/db/todo.db
+# 権限修正（必要な場合）
+chmod 644 src/main/resources/db/todo.db
+```
+
+2. バックエンド起動エラー
+- ポート8080が既に使用されている場合：
+  ```bash
+  # 使用中のポートを確認
+  lsof -i :8080
+  # 別のポートを使用（環境変数で設定）
+  export SERVER_PORT=8081
+  ```
+
+3. フロントエンドの表示問題
+- キャッシュのクリア
+- ブラウザの開発者ツールでコンソールエラーを確認
+
+## CI/CD
+
+本プロジェクトでは以下のCI/CDパイプラインを実装しています：
+
+1. ビルド＆テスト
+   - JavaユニットテストとJavaScriptテストの実行
+   - コードスタイルチェック（ESLintとCheckstyle）
+   - ビルド成果物の生成
+
+2. デプロイメント
+   - ステージング環境への自動デプロイ
+   - 本番環境への手動承認デプロイ
+
+## コントリビューション
+
+1. Issue作成
+   - バグ報告や機能要望は Issue で報告してください
+   - テンプレートに従って必要な情報を記入してください
+
+2. プルリクエスト
+   - 新しいブランチを作成してください
+   - コーディング規約に従ってください
+   - テストを追加してください
+   - プルリクエストテンプレートに従って説明を記入してください
+
 ## 開発ガイドライン
 
 ### コーディング規約
@@ -160,6 +304,95 @@ open tests/test.html
 - refactor: リファクタリング
 - test: テスト関連
 - chore: ビルド・補助ツール関連
+
+## セキュリティ
+
+### 実装済みのセキュリティ対策
+- CORS設定
+  ```java
+  response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+  response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  ```
+- セキュリティヘッダー
+  - X-Content-Type-Options: nosniff
+  - X-Frame-Options: DENY
+  - Content-Security-Policy
+- XSS対策
+  - 入力データのサニタイゼーション
+  - エスケープ処理の実装
+- SQLインジェクション対策
+  - プリペアードステートメントの使用
+  - 入力値のバリデーション
+
+## パフォーマンス最適化
+
+### フロントエンド最適化
+- JavaScript
+  ```bash
+  # 本番ビルド時の最適化
+  npm run build
+  ```
+  - コード分割（モジュールバンドル）
+  - Tree-shaking
+  - ミニフィケーション
+
+- CSS最適化
+  - 未使用CSSの削除
+  - スタイルの圧縮
+
+- 画像最適化
+  - WebP形式の利用
+  - 適切なサイズ設定
+  - 遅延読み込みの実装
+
+### キャッシュ戦略
+- ブラウザキャッシュの活用
+  - Cache-Control ヘッダーの設定
+  - ETagの実装
+- アプリケーションキャッシュ
+  - メモリキャッシュの活用
+  - キャッシュの無効化戦略
+
+## デプロイメント手順
+
+### 本番環境へのデプロイ
+
+1. ビルド
+```bash
+# フロントエンドのビルド
+cd frontend
+npm run build
+
+# バックエンドのビルド
+cd ../backend
+./gradlew build
+```
+
+2. デプロイ前チェック
+```bash
+# 設定ファイルの確認
+cat src/main/resources/application.properties
+
+# データベースマイグレーション
+./gradlew flywayMigrate
+```
+
+3. デプロイ実行
+```bash
+# 例：AWS Elastic Beanstalkの場合
+eb deploy production
+```
+
+4. デプロイ後の確認
+- ヘルスチェックの実行
+- ログの確認
+- メトリクスの監視
+
+### ロールバック手順
+```bash
+# 前のバージョンに戻す
+eb deploy --version v1.0.0
+```
 
 ## ライセンス
 
