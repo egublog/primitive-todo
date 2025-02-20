@@ -51,12 +51,18 @@ export class TodoViewI18n {
     const date = new Date(dueDate);
     const lang = this.getCurrentLang();
 
-    const options = {
-      year: "numeric",
-      month: lang === "ja" ? "long" : "short",
-      day: "numeric",
-    };
-
-    return date.toLocaleDateString(lang === "ja" ? "ja-JP" : "en-US", options);
+    if (lang === 'ja') {
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      return `${year}年${month}月${day}日`;
+    } else {
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      };
+      return date.toLocaleDateString('en-US', options);
+    }
   }
 }
