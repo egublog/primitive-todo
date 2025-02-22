@@ -1,8 +1,26 @@
 /**
+ * テーマ関連の定数
+ */
+const THEME_CONSTANTS = {
+  STORAGE_PREFIX: "primitive-todo_",
+  THEMES: {
+    LIGHT: "light",
+    DARK: "dark",
+  },
+  ICONS: {
+    SUN: "fas fa-sun",
+    MOON: "fas fa-moon",
+  },
+  ATTRIBUTES: {
+    THEME: "data-theme",
+  },
+};
+
+/**
  * テーマ管理サービス
  */
 export class ThemeService {
-  constructor(storagePrefix = 'primitive-todo_') {
+  constructor(storagePrefix = THEME_CONSTANTS.STORAGE_PREFIX) {
     this.storagePrefix = storagePrefix;
   }
 
@@ -10,8 +28,13 @@ export class ThemeService {
    * テーマの初期化
    */
   initialize() {
-    const savedTheme = localStorage.getItem(`${this.storagePrefix}theme`) || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    const savedTheme =
+      localStorage.getItem(`${this.storagePrefix}theme`) ||
+      THEME_CONSTANTS.THEMES.LIGHT;
+    document.documentElement.setAttribute(
+      THEME_CONSTANTS.ATTRIBUTES.THEME,
+      savedTheme
+    );
     this.updateThemeIcon(savedTheme);
   }
 
@@ -19,10 +42,18 @@ export class ThemeService {
    * テーマの切り替え
    */
   toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
-    document.documentElement.setAttribute('data-theme', newTheme);
+    const currentTheme = document.documentElement.getAttribute(
+      THEME_CONSTANTS.ATTRIBUTES.THEME
+    );
+    const newTheme =
+      currentTheme === THEME_CONSTANTS.THEMES.DARK
+        ? THEME_CONSTANTS.THEMES.LIGHT
+        : THEME_CONSTANTS.THEMES.DARK;
+
+    document.documentElement.setAttribute(
+      THEME_CONSTANTS.ATTRIBUTES.THEME,
+      newTheme
+    );
     localStorage.setItem(`${this.storagePrefix}theme`, newTheme);
     this.updateThemeIcon(newTheme);
   }
@@ -32,9 +63,12 @@ export class ThemeService {
    * @param {string} theme - 現在のテーマ
    */
   updateThemeIcon(theme) {
-    const themeIcon = document.querySelector('#toggleTheme i');
+    const themeIcon = document.querySelector("#toggleTheme i");
     if (themeIcon) {
-      themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+      themeIcon.className =
+        theme === THEME_CONSTANTS.THEMES.DARK
+          ? THEME_CONSTANTS.ICONS.SUN
+          : THEME_CONSTANTS.ICONS.MOON;
     }
   }
 }
